@@ -23,11 +23,114 @@
 	    loadData();
     }
 
+    function drawCurrentDayImage(currentDay) {
+//添加中心圆-当前具体日期-天
+	    var currentDayImage = new Image();//Html Image
+	    currentDayImage.onload = function () {
+		    let dimg = new Konva.Image({
+			    image: this,
+			    x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
+			    y: Math.round(stage.getHeight() / 2 - 320 / 2),
+			    width: 320,
+			    height: 320,
+		    });
+		    dimg.setName(`currentDayImage`);
+		    dimg.setId(`currentDayImage`);
+		    layer.add(dimg);
+		    stage.add(layer);
+	    };
+	    let currentDayImageName = `circle_date_${currentDay}.png`;
+	    if (currentDay.toString().length == 1) {
+		    currentDayImageName = `circle_date_0${currentDay}.png`;
+	    }
+	    currentDayImage.src = require('../assets/img/day/' + currentDayImageName);
+    }
+
+    function drawAllDaysImage(allays) {
+//添加中心圆-日期-天
+	    var dayImage = new Image();//Html Image
+	    dayImage.onload = function () {
+		    let dimg = new Konva.Image({
+			    image: this,
+			    x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
+			    y: Math.round(stage.getHeight() / 2 - 320 / 2),
+			    width: 320,
+			    height: 320,
+		    });
+		    dimg.setName(`dayImage`);
+		    dimg.setId(`dayImage`);
+		    layer.add(dimg);
+		    stage.add(layer);
+	    };
+	    let dayImageName = `circle_date_all_${allays}.png`;
+	    dayImage.src = require('../assets/img/' + dayImageName);
+    }
+
+    function drawCurrentMonthImage(currentMonth) {
+	    var currentMonthImage = new Image();//Html Image
+	    currentMonthImage.onload = function () {
+		    let mimg = generateImage(this,
+				    {
+					    x: stage.getWidth() / 2 - 260 / 2,
+					    y: stage.getHeight() / 2 - 260 / 2,
+				    },
+				    {
+					    w: 260,
+					    h: 260
+				    });//Konva Image
+		    mimg.setName(`currentMonthImage`);
+		    mimg.setId(`currentMonthImage`);
+		    layer.add(mimg);
+	    };
+	    let currentMonthImageName = `circl_month_${currentMonth}.png`;
+	    if (currentMonth.toString().length == 1) {
+		    currentMonthImageName = `circl_month_0${currentMonth}.png`;
+	    }
+	    currentMonthImage.src = require('../assets/img/month/' + currentMonthImageName);
+    }
+
+    function drawAllMonthImage() {
+//添加中心圆-月份
+	    var monthImage = new Image();//Html Image
+	    monthImage.onload = function () {
+		    let mimg = generateImage(this,
+				    {
+					    x: stage.getWidth() / 2 - 260 / 2,
+					    y: stage.getHeight() / 2 - 260 / 2,
+				    },
+				    {
+					    w: 260,
+					    h: 260
+				    });//Konva Image
+		    mimg.setName(`monthImage`);
+		    mimg.setId(`monthImage`);
+		    layer.add(mimg);
+	    };
+	    monthImage.src = require('../assets/img/circl_month_all.png');
+    }
+
+    function drawCircleImage() {
+//添加中心圆
+	    var circleImage = new Image();//Html Image
+	    circleImage.onload = function () {
+		    let img = generateImage(this,
+				    {
+					    x: stage.getWidth() / 2 - 240 / 2,
+					    y: stage.getHeight() / 2 - 240 / 2,
+				    },
+				    {
+					    w: 240,
+					    h: 240
+				    });//Konva Image
+		    img.setName(`circleImage`);
+		    img.setId(`circleImage`);
+		    layer.add(img);
+	    };
+	    circleImage.src = require('../assets/img/bg_mid_round.png');
+    }
+
     function loadData() {
-	    let date = new Date();
-	    let currentMonth = date.getMonth() + 1;//从 Date 对象返回月份 (0 ~ 11)
-	    let currentDay = date.getDate();
-	    let allays = getDaysByMonth(date.getYear(), currentMonth);
+
 	    if (layer && layer != null) {
 		    layer.clear();
 	    }
@@ -59,104 +162,20 @@
 	    });
 	    layer.add(circle);
 
-	    //添加中心圆
-	    var circleImage = new Image();//Html Image
-	    circleImage.onload = function () {
-		    let img = generateImage(this,
-				    {
-					    x: stage.getWidth() / 2 - 240 / 2,
-					    y: stage.getHeight() / 2 - 240 / 2,
-				    },
-				    {
-					    w: 240,
-					    h: 240
-				    });//Konva Image
-		    img.setName(`circleImage`);
-		    img.setId(`circleImage`);
-		    layer.add(img);
-	    };
-	    circleImage.src = require('../assets/img/bg_mid_round.png');
+	    drawCircleImage();
 
+	    drawAllMonthImage();
 
-	    //添加中心圆-月份
-	    var monthImage = new Image();//Html Image
-	    monthImage.onload = function () {
-		    let mimg = generateImage(this,
-				    {
-					    x: stage.getWidth() / 2 - 260 / 2,
-					    y: stage.getHeight() / 2 - 260 / 2,
-				    },
-				    {
-					    w: 260,
-					    h: 260
-				    });//Konva Image
-		    mimg.setName(`monthImage`);
-		    mimg.setId(`monthImage`);
-		    layer.add(mimg);
-	    };
-	    monthImage.src = require('../assets/img/circl_month_all.png');
+	    let date = new Date();
+	    let currentMonth = date.getMonth() + 1;//从 Date 对象返回月份 (0 ~ 11)
+	    let currentDay = date.getDate();
+	    let allays = getDaysByMonth(date.getYear(), currentMonth);
 
+	    drawCurrentMonthImage(currentMonth);
 
-	    var currentMonthImage = new Image();//Html Image
-	    currentMonthImage.onload = function () {
-		    let mimg = generateImage(this,
-				    {
-					    x: stage.getWidth() / 2 - 260 / 2,
-					    y: stage.getHeight() / 2 - 260 / 2,
-				    },
-				    {
-					    w: 260,
-					    h: 260
-				    });//Konva Image
-		    mimg.setName(`currentMonthImage`);
-		    mimg.setId(`currentMonthImage`);
-		    layer.add(mimg);
-	    };
-	    let currentMonthImageName = `circl_month_${currentMonth}.png`;
-	    if (currentMonth.toString().length == 1) {
-		    currentMonthImageName = `circl_month_0${currentMonth}.png`;
-	    }
-	    currentMonthImage.src = require('../assets/img/month/' + currentMonthImageName);
+	    drawAllDaysImage(allays);
 
-
-	    //添加中心圆-日期-天
-	    var dayImage = new Image();//Html Image
-	    dayImage.onload = function () {
-		    let dimg = new Konva.Image({
-			    image: this,
-			    x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-			    y: Math.round(stage.getHeight() / 2 - 320 / 2),
-			    width: 320,
-			    height: 320,
-		    });
-		    dimg.setName(`dayImage`);
-		    dimg.setId(`dayImage`);
-		    layer.add(dimg);
-		    stage.add(layer);
-	    };
-	    let dayImageName = `circle_date_all_${allays}.png`;
-	    dayImage.src = require('../assets/img/' + dayImageName);
-
-	    //添加中心圆-当前具体日期-天
-	    var currentDayImage = new Image();//Html Image
-	    currentDayImage.onload = function () {
-		    let dimg = new Konva.Image({
-			    image: this,
-			    x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-			    y: Math.round(stage.getHeight() / 2 - 320 / 2),
-			    width: 320,
-			    height: 320,
-		    });
-		    dimg.setName(`currentDayImage`);
-		    dimg.setId(`currentDayImage`);
-		    layer.add(dimg);
-		    stage.add(layer);
-	    };
-	    let currentDayImageName = `circle_date_${currentDay}.png`;
-	    if (currentDay.toString().length == 1) {
-		    currentDayImageName = `circle_date_0${currentDay}.png`;
-	    }
-	    currentDayImage.src = require('../assets/img/day/' + currentDayImageName);
+	    drawCurrentDayImage(currentDay);
 
 
 	    let angle = 360 / DISPART_LIST.length;// 算出每一个对象所要显示在圆周上的角度
@@ -361,43 +380,22 @@
 		    updateAllDaysImage(allays)
 		    {
 			    let dayImage = stage.find('#dayImage')[0];
-			    if (dayImage) {
-				    let dayImageName = `circle_date_all_${allays}.png`;
-				    let img = new Image();
-				    img.src = require('../assets/img/' + dayImageName);
-				    dayImage.draw();
-			    }
+                dayImage.remove();
+                drawAllDaysImage(allays);
 		    },
 
 		    updateCurrentMonthImage(currentMonth)
 		    {
 			    let currentMonthImage = stage.find('#currentMonthImage')[0];
-			    if (currentMonthImage) {
-				    let currentMonthImageName = `circl_month_${currentMonth}.png`;
-				    if (currentMonth.toString().length == 1) {
-					    currentMonthImageName = `circl_month_0${currentMonth}.png`;
-				    }
-				    let img = new Image();
-				    img.src = require('../assets/img/month/' + currentMonthImageName);
-				    currentMonthImage.setImage(img);
-				    currentMonthImage.draw();
-			    }
+                currentMonthImage.remove();
+			    drawCurrentMonthImage(currentMonth);
 		    },
 
 		    updateCurrentDayImage(currentDay)
 		    {
 			    let currentDayImage = stage.find('#currentDayImage')[0];
-			    if (currentDayImage) {
-				    console.log("updateCurrentDayImage");
-				    let currentDayImageName = `circle_date_${currentDay}.png`;
-				    if (currentDay.toString().length == 1) {
-					    currentDayImageName = `circle_date_0${currentDay}.png`;
-				    }
-				    let img = new Image();
-				    img.src = require('../assets/img/day/' + currentDayImageName);
-				    currentDayImage.setImage(img);
-				    currentDayImage.draw();
-			    }
+			    currentDayImage.remove();
+			    drawCurrentDayImage(currentDay);
 		    },
 
 		    playAnimation()

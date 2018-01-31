@@ -252,27 +252,22 @@
 			 _this.currentDate = new Date();
 		 },
 		 mounted: function () {
-			 currentInterval = setInterval(function doAnimation() {
+			 currentInterval = setInterval(function updateTime() {
 				 _this.currentTime = new Date().format("MM月dd日 hh:mm");
 				 let d = new Date();
-				 if (d.getHours() == 0 && d.getMinutes() == 0 && d.getSeconds() % 20 == 0) //当时间为00:00时，背景日期图片计算并更新
+				 if (d.getHours() == 0 && d.getMinutes() == 0 && d.getSeconds() == 0) //当时间为00:00时，背景日期图片计算并更新
 				 {
-                     if (_this.$refs.staffPage) {
-                         _this.$refs.staffPage.updateDateImage();
-                     }
-//					 setTimeout(()=> {
-//						 if (_this.$refs.staffPage) {
-//							 _this.$refs.staffPage.updateDateImage();
-//						 }
-//					 }, 100)
+					 if (_this.$refs.staffPage) {
+						 _this.$refs.staffPage.updateDateImage();
+					 }
 				 }
 				 let dtime = new Date() - _this.currentDate;  // 计算时间差
 				 let diffDays = Math.floor(dtime / (24 * 3600 * 1000));
 				 if (diffDays >= 1) {
 					 _this.currentDate = new Date();
-                     if (_this.$refs.staffPage) {
-                         _this.$refs.staffPage.updateDateImage();
-                     }
+					 if (_this.$refs.staffPage) {
+						 _this.$refs.staffPage.updateDateImage();
+					 }
 				 }
 
 //			    $.ajax({
