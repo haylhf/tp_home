@@ -380,21 +380,27 @@
 		    updateAllDaysImage(allays)
 		    {
 			    let dayImage = stage.find('#dayImage')[0];
-                dayImage.remove();
-                drawAllDaysImage(allays);
+			    if (dayImage) {
+				    dayImage.remove();
+			    }
+			    drawAllDaysImage(allays);
 		    },
 
 		    updateCurrentMonthImage(currentMonth)
 		    {
 			    let currentMonthImage = stage.find('#currentMonthImage')[0];
-                currentMonthImage.remove();
+			    if (currentMonthImage) {
+				    currentMonthImage.remove();
+			    }
 			    drawCurrentMonthImage(currentMonth);
 		    },
 
 		    updateCurrentDayImage(currentDay)
 		    {
 			    let currentDayImage = stage.find('#currentDayImage')[0];
-			    currentDayImage.remove();
+			    if (currentDayImage) {
+				    currentDayImage.remove();
+			    }
 			    drawCurrentDayImage(currentDay);
 		    },
 
@@ -404,14 +410,20 @@
 			    var tween = new Konva.Tween({
 				    node: bgImage,
 				    duration: 1,
-				    opacity: 0.6,
-				    scaleX: 1.5
+				    opacity: 1,
+				    scaleX: 1.2,
+				    scaleY: 1.2,
 			    });
 
 			    // start tween after 2 seconds
 			    setTimeout(function () {
 				    tween.play();
 			    }, 500);
+
+			    let signedUser = stage.find('#signedUser_1')[0];
+			    if (signedUser) {
+				    signedUser.setText("15");
+			    }
 		    }
 	    },
 	    computed: {},
