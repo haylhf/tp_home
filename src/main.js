@@ -2,8 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-//import Websocket from 'websocket'
-//Vue.use(Websocket)
+import VueKonva from 'vue-konva'
+
+Vue.use(VueKonva)
+
 Vue.use(Element)
 // import Require from 'async-validator/lib'
 // Vue.use(Require)

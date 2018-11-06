@@ -4,13 +4,16 @@
              style="min-width: 100%;min-height: 100%;position: absolute;z-index: -100; background-position: center;" />
         <div class="homeDiv" >
             <el-row >
-                    <span style="font-size: 28px;" @click="btnTest" >签到：</span >
-                    <span style="font-size: 30px;" >{{getSignIn()}}</span ></el-row >
+                    <span style="font-size: 36px;" @click="btnTest" >签到：</span >
+                    <span style="font-size: 36px;" >{{getSignIn()}}</span >
+            </el-row >
+            <br/>
             <el-row >
                 <span >{{currentTime}}</span >
             </el-row >
         </div >
-        <StaffPage ref="staffPage" ></StaffPage >
+        <!--<StaffPage ref="staffPage" ></StaffPage >-->
+        <StaffSignPage ref="staffPage" ></StaffSignPage>
     </div >
 
 </template >
@@ -158,11 +161,12 @@
     var currentInterval;
     import Vue from 'vue'
     import StaffPage from '../components/staff_page.vue';
-
+    import StaffSignPage from '../components/staffsign_page.vue';
     export default {
 	    name: "home",
 	    components: {
 		    StaffPage,
+            StaffSignPage,
 	    },
 	    data() {
 		    _this = this;
@@ -227,7 +231,7 @@
 
 		    getBgImg() {
 			    var bg;
-			    //bg = require('../assets/img/main.png')
+			    bg = require('../assets/img/main.png')
 			    return bg;
 		    },
 		    onSend() {
@@ -299,8 +303,10 @@
     }
 
     .homeDiv {
-	    float: right;
-	    margin-top: 50px;
+        right: 0;
+	    text-align: right;
+	    margin-top: 20px;
         margin-right: 20px;
+        position: absolute;z-index: 0;
     }
 </style >

@@ -4,7 +4,7 @@
 	    </div >
         <div id="sample" style="z-index: 0" >
 	        <div id="myDiagramDiv"
-	             style="background-color: white; border: solid 1px black; width: 100%;" ></div >
+	             style="background-color: black; border: solid 1px black; width: 100%;" ></div >
             </div >
         </div >
 	</div>
@@ -23,8 +23,8 @@
 						{
 							initialAutoScale: go.Diagram.UniformToFill,
 							contentAlignment: go.Spot.Center,
-							isReadOnly: true,
-							allowMove: false,
+							isReadOnly: false,
+							allowMove: true,
 							allowDelete: false,
 							layout: $(go.ForceDirectedLayout),
 							// moving and copying nodes also moves and copies their subtrees
@@ -42,10 +42,10 @@
 						{
 							selectionObjectName: "PANEL",
 							isTreeExpanded: true,
-							isTreeLeaf: true
+							isTreeLeaf: true,
 						},
 						// the node's outer shape, which will surround the text
-						$(go.Panel, "Auto",
+						$(go.Panel, "Vertical",
 								{name: "PANEL"},
 								$(go.Shape, "RoundedRectangle", //shape
 										{
@@ -62,14 +62,15 @@
 											font: "12pt sans-serif",
 											margin: 5,
 										},
-										new go.Binding("text")),
-								$(go.TextBlock,
-										{
-											font: "12pt sans-serif",
-											margin: 5,
-										},
-										new go.Binding("text","info"))
+										new go.Binding("text","info").makeTwoWay()),
+
 						),
+						$(go.TextBlock,
+								{
+									font: "12pt sans-serif",
+									margin: 5,
+								},
+								new go.Binding("text").makeTwoWay())
 				);  // end Node
 
 		// create the model with a root node data
@@ -100,7 +101,7 @@
 				key: model.nodeDataArray.length,
 				text: `${i}/10`,
 				parent: parentdata.key,
-				rootdistance: 1,
+				rootdistance: 1+i,
 				info: "test" + i,
 			};
 			// add to model.nodeDataArray and create a Node
