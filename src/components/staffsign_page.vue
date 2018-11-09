@@ -2,7 +2,7 @@
     <div >
 	    <!--<div class="centerDiv" >-->
 	    <!--</div >-->
-		<div id="container" style="background-color: blue" ></div >
+		<div id="container" ></div >
 	</div >
 
 </template >
