@@ -364,6 +364,12 @@ function sleep(delay) {
 	}
 }
 
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
 Date.prototype.format = function (format) {
 	var o = {
 		"M+": this.getMonth() + 1, //month

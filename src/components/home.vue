@@ -1,19 +1,19 @@
 <template xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml" >
     <div >
-        <img :src="getBgImg()"
-             style="min-width: 100%;min-height: 100%;position: absolute;z-index: -100; background-position: center;" />
+        <img :src="bgImg"
+        style="width: 100%;height: 100%;position: absolute;z-index: -100; background-position: center;" />
         <div class="homeDiv" >
             <el-row >
                     <span style="font-size: 36px;" @click="btnTest" >签到：</span >
                     <span style="font-size: 36px;" >{{getSignIn()}}</span >
             </el-row >
-            <br/>
+            <br />
             <el-row >
                 <span >{{currentTime}}</span >
             </el-row >
         </div >
         <!--<StaffPage ref="staffPage" ></StaffPage >-->
-        <StaffSignPage ref="staffPage" ></StaffSignPage>
+        <StaffSignPage ref="staffPage" ></StaffSignPage >
     </div >
 
 </template >
@@ -166,7 +166,7 @@
 	    name: "home",
 	    components: {
 		    StaffPage,
-            StaffSignPage,
+		    StaffSignPage,
 	    },
 	    data() {
 		    _this = this;
@@ -177,6 +177,7 @@
 			    staffNum: 0,
 			    signInNum: 0,
 			    isShowVIP: false,
+			    bgImg: require('../assets/img/main.png'),
 		    }
 	    },
 	    methods: {
@@ -229,11 +230,6 @@
 			    ));//方法1
 		    },
 
-		    getBgImg() {
-			    var bg;
-			    bg = require('../assets/img/main.png')
-			    return bg;
-		    },
 		    onSend() {
 			    let strMsg = _this.sendText;// document.getElementById("msg").value;
 			    if (strMsg) {
@@ -303,10 +299,11 @@
     }
 
     .homeDiv {
-        right: 0;
+	    right: 0;
 	    text-align: right;
 	    margin-top: 20px;
-        margin-right: 20px;
-        position: absolute;z-index: 0;
+	    margin-right: 20px;
+	    position: absolute;
+	    z-index: 0;
     }
 </style >
