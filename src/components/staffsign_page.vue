@@ -24,11 +24,7 @@
     var stage = null;
     var layer = null;
     var circle = null;
-    var lineLength = 0;
-    var minLength = 0;
-    var maxLength = 0;
     var imgSize = 110;
-    var cengerGroup = null;
 
     /*
      * 添加每个部门对象到图层，包括文字，直线
@@ -68,8 +64,8 @@
 		    fill: '#EE6911',
 		    stroke: '#EE6911',
 		    strokeWidth: 2,
-		    id: `Arrow_${id}`,
-		    name: `Arrow_${item.name}`,
+		    id: `arrowLine_${id}`,
+		    name: `arrowLine_${item.name}`,
 	    });
 //		arrowLine.move({
 //			x: 100,
@@ -80,14 +76,14 @@
 	    var group = new Konva.Group({
 		    x: 0,
 		    y: 0,
-		    id: `Group_${id}`,
-		    name: `Group_${item.name}`,
+		    id: `group_${id}`,
+		    name: `group_${item.name}`,
 //		rotation: 0
 	    });
 
-	    var imgObj = new Image();//Html Image
+	    var bgImage = new Image();//Html Image background image
 
-	    imgObj.onload = function () {
+	    bgImage.onload = function () {
 		    let img = generateImage(this,
 				    {
 					    x: circle.getX() + endPointer.x - imgSize / 2,
@@ -97,18 +93,37 @@
 					    w: 110,
 					    h: 110
 				    });//Konva Image
-		    img.setName(`Image_${item.name}`);
-		    img.setId(`Image_${id}`);
-
+		    img.setName(`bgImage_${item.name}`);
+		    img.setId(`bgImage_${id}`);
 		    group.add(img)
-//            layer.add(group);
-//            stage.add(layer);
 
 	    };
-	    imgObj.src = require('../assets/img/signed_block.png');
+	    bgImage.src = require('../assets/img/signed_block.png');
+
+	    var signedUser = new Konva.Text({
+		    x: circle.getX() + endPointer.x - imgSize / 2 + 20,
+		    y: circle.getY() + endPointer.y - imgSize / 2 + 40,
+		    text: '10',
+		    fontSize: 30,
+		    fontFamily: 'Calibri',
+		    fill: 'white',
+		    align: 'center',
+		    id: `signedUser_${id}`,
+		    name: `signedUser_${item.name}`,
+	    });
+	    var totalUser = new Konva.Text({
+		    x: circle.getX() + endPointer.x + 20,
+		    y: circle.getY() + endPointer.y + 10,//40字本身的高度
+		    text: '20',
+		    fontSize: 30,
+		    fontFamily: 'Calibri',
+		    fill: 'white',
+		    align: 'right',
+		    id: `totalUser_${id}`,
+		    name: `totalUser_${item.name}`,
+	    });
 
 	    var imgDepart = new Image();//Html Image
-
 	    imgDepart.onload = function () {
 		    let departimg = generateImage(this,
 				    {
@@ -123,6 +138,8 @@
 		    departimg.setId(`imgDepart_${id}`);
 
 		    group.add(departimg)
+		    group.add(signedUser);
+		    group.add(totalUser);
 		    layer.add(group);
 		    stage.add(layer);
 	    };
@@ -134,6 +151,20 @@
     }
 
     $(document).ready(function () {
+	    loadData();
+    })
+    window.onresize = function () {
+	    loadData();
+    }
+
+    function loadData() {
+	    if (layer && layer != null) {
+		    layer.clear();
+	    }
+	    if (stage && stage != null) {
+		    stage.clear();
+	    }
+
 	    rootWidth = window.innerWidth;
 	    rootHeight = window.innerHeight;
 	    stage = new Konva.Stage({
@@ -170,9 +201,6 @@
 		    img.setName(`circleImage`);
 		    img.setId(`circleImage`);
 		    layer.add(img);
-		    stage.add(layer);
-//			cengerGroup.add(img)
-
 	    };
 	    circleImage.src = require('../assets/img/bg_mid_round.png');
 
@@ -191,11 +219,7 @@
 				    });//Konva Image
 		    mimg.setName(`monthImage`);
 		    mimg.setId(`monthImage`);
-
 		    layer.add(mimg);
-		    stage.add(layer);
-//			cengerGroup.add(mimg)
-
 	    };
 	    monthImage.src = require('../assets/img/circl_month_all.png');
 
@@ -203,22 +227,18 @@
 	    //添加中心圆-日期-天
 	    var dayImage = new Image();//Html Image
 	    dayImage.onload = function () {
-		    let dimg = generateImage(this,
-				    {
-					    x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-					    y: Math.round(stage.getHeight() / 2 - 320 / 2),
-				    },
-				    {
-					    w: 320,
-					    h: 320
-				    });//Konva Image
+		    let dimg = new Konva.Image({
+			    image: this,
+			    x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
+			    y: Math.round(stage.getHeight() / 2 - 320 / 2),
+			    width: 320,
+			    height: 320,
+		    });
 		    dimg.setName(`dayImage`);
 		    dimg.setId(`dayImage`);
+//		    dimg.rotate(15);
 		    layer.add(dimg);
 		    stage.add(layer);
-//			cengerGroup.add(dimg)
-//			layer.add(cengerGroup);
-//			stage.add(layer);
 	    };
 	    dayImage.src = require('../assets/img/circle_date_all_31.png');
 
@@ -238,8 +258,7 @@
 //			circle.setX(amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerX);
 //		}, layer);
 //		anim.start();
-
-    })
+    }
 
     /*
      *  生成图对象 Konva Image

@@ -18,6 +18,11 @@
 </template >
 
 <script >
+	 $(document).ready(function () {
+		 client.connect(options);//连接服务器并注册连接成功处理事件
+		 client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
+		 client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
+	 })
     var isLoading = false;
     var hostname = MqttServer,
 		    port = ServerPort,
@@ -78,9 +83,7 @@
     };
     window.onload = function () {
 
-	    client.connect(options);//连接服务器并注册连接成功处理事件
-	    client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
-	    client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
+
     };
 
     function onConnectionLost(responseObject) {
