@@ -20,148 +20,148 @@ const DISPART_LIST = [
     {
         name: "Office",
         text: "办公室",
-        imgUrl: `../assets/img/depart/icon_bangong.png`
+        imgUrl: `icon_bangong.png`
     },
     {
         name: "Real_Estate_Investmen",
         text: "不动产投资事业部",
-        imgUrl: '../assets/img/depart/icon_budongchan.png'
+        imgUrl: 'icon_budongchan.png'
     },
     {
         name: "Accounting",
         text: "账务部",
-        imgUrl: '../assets/img/depart/icon_caiwu.png'
+        imgUrl: 'icon_caiwu.png'
     },
     {
         name: "Product",
         text: "产品开发部",
-        imgUrl: '../assets/img/depart/icon_chanping.png'
+        imgUrl: 'icon_chanping.png'
     }
     ,
     {
         name: "Board_Office",
         text: "董事会办公室",
-        imgUrl: '../assets/img/depart/icon_dongshi_text.png'
+        imgUrl: 'icon_dongshi_text.png'
     }
     ,
     {
         name: "Risk_Management",
         text: "风险管理合资部",
-        imgUrl: '../assets/img/depart/icon_fengxian.png'
+        imgUrl: 'icon_fengxian.png'
 
     }
     ,
     {
         name: "Fixed_Income",
         text: "固定收益部",
-        imgUrl: '../assets/img/depart/icon_guding.png'
+        imgUrl: 'icon_guding.png'
     }
     ,
     {
         name: "Equity_Investment",
         text: "股权投资事业部",
-        imgUrl: '../assets/img/depart/icon_guquan.png'
+        imgUrl: 'icon_guquan.png'
     }
     ,
     {
         name: "Monitoring",
         text: "监察部",
-        imgUrl: '../assets/img/depart/icon_jiancha.png'
+        imgUrl: 'icon_jiancha.png'
     }
     ,
     {
         name: "Business_Deal",
         text: "交易部",
-        imgUrl: '../assets/img/depart/icon_jiaoyi.png'
+        imgUrl: 'icon_jiaoyi.png'
     }
     ,
     {
         name: "Financial_Markets",
         text: "金融市场部",
-        imgUrl: '../assets/img/depart/icon_jinrong.png'
+        imgUrl: 'icon_jinrong.png'
     }
     ,
     {
         name: "Quantification_Strategy",
         text: "量化及策略部",
-        imgUrl: '../assets/img/depart/icon_lianghua.png'
+        imgUrl: 'icon_lianghua.png'
     }
     ,
     {
         name: "Alternative_Investment",
         text: "另类投资事业部",
-        imgUrl: '../assets/img/depart/icon_linglei.png'
+        imgUrl: 'icon_linglei.png'
     }
     ,
     {
         name: "Equity_Investment",
         text: "权益投资事业部",
-        imgUrl: '../assets/img/depart/icon_quanyi.png'
+        imgUrl: 'icon_quanyi.png'
     }
     ,
     {
         name: "Human_Resources",
         text: "人力资源部",
-        imgUrl: '../assets/img/depart/icon_renli.png'
+        imgUrl: 'icon_renli.png'
     }
     ,
     {
         name: "Post_Investment_Management",
         text: "投后管理部",
-        imgUrl: '../assets/img/depart/icon_touhou.png'
+        imgUrl: 'icon_touhou.png'
 
     }
     ,
     {
         name: "Project_Review",
         text: "项目评审及监督部",
-        imgUrl: '../assets/img/depart/icon_xiangmu.png'
+        imgUrl: 'icon_xiangmu.png'
 
     }
     ,
     {
         name: "Information_Technology",
         text: "信息技术部",
-        imgUrl: '../assets/img/depart/icon_xinxi.png'
+        imgUrl: 'icon_xinxi.png'
 
     }
     ,
     {
         name: "Credit_Evaluation",
         text: "信用评估部",
-        imgUrl: '../assets/img/depart/icon_xinyong.png'
+        imgUrl: 'icon_xinyong.png'
 
     }
     ,
     {
         name: "Research",
         text: "研究部",
-        imgUrl: '../assets/img/depart/icon_yanjiu.png'
+        imgUrl: 'icon_yanjiu.png'
     }
     ,
     {
         name: "Operation_Management",
         text: "运营管理部",
-        imgUrl: '../assets/img/depart/icon_yunying.png'
+        imgUrl: 'icon_yunying.png'
     }
     ,
     {
         name: "Strategic_Development",
         text: "战略发展部",
-        imgUrl: '../assets/img/depart/icon_zhanlue.png'
+        imgUrl: 'icon_zhanlue.png'
 
     }
     ,
     {
         name: "Asset_Management",
         text: "资产管理事业部",
-        imgUrl: '../assets/img/depart/icon_zichanguanli.png'
+        imgUrl: 'icon_zichanguanli.png'
     }
     ,
     {
         name: "Combination_Management",
         text: "组合管理部",
-        imgUrl: '../assets/img/depart/icon_zuhe.png'
+        imgUrl: 'icon_zuhe.png'
     }
 ]
 
