@@ -8,16 +8,6 @@
 </template >
 
 <script >
-    /*
-     * 根据角度算出相应在圆周上的点坐标，后续要以这点为起始点画直线
-     * */
-    function getPointByAngle(centerPoint, r, angle) {
-	    let point = {};
-	    //从centerPoint点开始算 r时，过圆心上的圆周交点坐标x=r*sin(angle),y=r*cos(angle)
-	    point.x = Math.sin(angle * Math.PI / 180) * r + centerPoint.x;
-	    point.y = centerPoint.y - Math.cos(angle * Math.PI / 180) * r;
-	    return point;
-    }
 
     var rootWidth = window.innerWidth;
     var rootHeight = window.innerHeight;
@@ -25,130 +15,6 @@
     var layer = null;
     var circle = null;
     var imgSize = 110;
-
-    /*
-     * 添加每个部门对象到图层，包括文字，直线
-     *
-     */
-    function addDispartToUI(angle, item, id) {
-//		let arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius() / 2, rootWidth / 2);
-	    let arrowLength = getRandomInt(rootWidth / 2 - imgSize * 2, rootWidth / 2);//这里可以位置的调整取值范围
-
-	    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
-	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - imgSize, angle);// 结束点，角度不变，仅长度变长。
-
-	    if (Math.abs(endPointer.x) >= rootWidth / 2) {
-		    if (endPointer.x < 0) {
-			    endPointer.x += Math.abs(endPointer.x) - rootWidth / 2 + imgSize / 2;
-		    } else {
-			    endPointer.x -= Math.abs(endPointer.x) - rootWidth / 2 + imgSize / 2;
-		    }
-	    }
-	    if (Math.abs(endPointer.y) >= rootHeight / 2) {
-		    if (endPointer.y < 0) {
-			    endPointer.y += Math.abs(endPointer.y) - rootHeight / 2 + imgSize / 2;
-		    } else {
-			    endPointer.y -= Math.abs(endPointer.y) - rootHeight / 2 + imgSize / 2;
-		    }
-	    }
-
-	    //circle.attrs
-	    let x = Math.cos(angle) * circle.getRadius();//基于画布的坐标 从圆周上的点
-	    let y = Math.sin(angle) * circle.getRadius();
-	    var arrowLine = new Konva.Arrow({
-		    x: circle.getX(),//圆 心
-		    y: circle.getY(),//圆 心
-		    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y], //
-		    pointerLength: 0,//不显示箭头
-		    pointerWidth: 0,//不显示箭头
-		    fill: '#EE6911',
-		    stroke: '#EE6911',
-		    strokeWidth: 2,
-		    id: `arrowLine_${id}`,
-		    name: `arrowLine_${item.name}`,
-	    });
-//		arrowLine.move({
-//			x: 100,
-//			y: 100,
-//		});
-	    layer.add(arrowLine);
-
-	    var group = new Konva.Group({
-		    x: 0,
-		    y: 0,
-		    id: `group_${id}`,
-		    name: `group_${item.name}`,
-//		rotation: 0
-	    });
-
-	    var bgImage = new Image();//Html Image background image
-
-	    bgImage.onload = function () {
-		    let img = generateImage(this,
-				    {
-					    x: circle.getX() + endPointer.x - imgSize / 2,
-					    y: circle.getY() + endPointer.y - imgSize / 2,
-				    },
-				    {
-					    w: 110,
-					    h: 110
-				    });//Konva Image
-		    img.setName(`bgImage_${item.name}`);
-		    img.setId(`bgImage_${id}`);
-		    group.add(img)
-
-	    };
-	    bgImage.src = require('../assets/img/signed_block.png');
-
-	    var signedUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x - imgSize / 2 + 20,
-		    y: circle.getY() + endPointer.y - imgSize / 2 + 40,
-		    text: '10',
-		    fontSize: 30,
-		    fontFamily: 'Calibri',
-		    fill: 'white',
-		    align: 'center',
-		    id: `signedUser_${id}`,
-		    name: `signedUser_${item.name}`,
-	    });
-	    var totalUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x + 20,
-		    y: circle.getY() + endPointer.y + 10,//40字本身的高度
-		    text: '20',
-		    fontSize: 30,
-		    fontFamily: 'Calibri',
-		    fill: 'white',
-		    align: 'right',
-		    id: `totalUser_${id}`,
-		    name: `totalUser_${item.name}`,
-	    });
-
-	    var imgDepart = new Image();//Html Image
-	    imgDepart.onload = function () {
-		    let departimg = generateImage(this,
-				    {
-					    x: circle.getX() + endPointer.x - imgSize / 2,
-					    y: circle.getY() + endPointer.y + imgSize / 2,//在上个图下方显示部门图片
-				    },
-				    {
-					    w: 110,
-					    h: 25
-				    });//Konva Image
-		    departimg.setName(`imgDepart_${item.name}`);
-		    departimg.setId(`imgDepart_${id}`);
-
-		    group.add(departimg)
-		    group.add(signedUser);
-		    group.add(totalUser);
-		    layer.add(group);
-		    stage.add(layer);
-	    };
-	    try {
-		    imgDepart.src = require(`../assets/img/depart/${item.imgUrl}`);
-	    } catch (e) {
-		    console.log(e)
-	    }
-    }
 
     $(document).ready(function () {
 	    loadData();
@@ -172,6 +38,9 @@
 		    width: rootWidth,
 		    height: rootHeight,
 
+	    });
+	    stage.on('click', function (e) {
+		    _this.updateData()
 	    });
 
 	    layer = new Konva.Layer();
@@ -236,7 +105,6 @@
 		    });
 		    dimg.setName(`dayImage`);
 		    dimg.setId(`dayImage`);
-//		    dimg.rotate(15);
 		    layer.add(dimg);
 		    stage.add(layer);
 	    };
@@ -249,15 +117,129 @@
 	    for (let i = 0; i < DISPART_LIST.length; i++) {
 		    addDispartToUI(angle * i, DISPART_LIST[i], i);
 	    }
+    }
 
-//		var amplitude = 100;
-//		var period = 2000;
-//		// in ms
-//		var centerX = stage.getWidth() / 2;
-//		var anim = new Konva.Animation(function (frame) {
-//			circle.setX(amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerX);
-//		}, layer);
-//		anim.start();
+    /*
+     * 添加每个部门对象到图层，包括文字，直线
+     *
+     */
+    function addDispartToUI(angle, item, id) {
+//		let arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius() / 2, rootWidth / 2);
+	    let arrowLength = getRandomInt(rootWidth / 2 - imgSize, rootWidth / 2 + imgSize);//这里可以位置的调整取值范围
+
+	    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
+	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - imgSize, angle);// 结束点，角度不变，仅长度变长。
+
+	    if (Math.abs(endPointer.x) >= rootWidth / 2 - imgSize / 2) {
+		    if (endPointer.x < 0) {
+			    endPointer.x += Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
+		    } else {
+			    endPointer.x -= Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
+		    }
+	    }
+	    if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize / 2) {
+		    if (endPointer.y < 0) {
+			    endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
+		    } else {
+			    endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
+		    }
+	    }
+
+	    //circle.attrs
+	    let x = Math.cos(angle) * circle.getRadius();//基于画布的坐标 从圆周上的点
+	    let y = Math.sin(angle) * circle.getRadius();
+	    var arrowLine = new Konva.Arrow({
+		    x: circle.getX(),//圆 心
+		    y: circle.getY(),//圆 心
+		    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y], //
+		    pointerLength: 0,//不显示箭头
+		    pointerWidth: 0,//不显示箭头
+		    fill: '#EE6911',
+		    stroke: '#EE6911',
+		    strokeWidth: 2,
+		    id: `arrowLine_${id}`,
+		    name: `arrowLine_${item.name}`,
+	    });
+	    layer.add(arrowLine);
+
+	    var group = new Konva.Group({
+		    x: 0,
+		    y: 0,
+		    id: `group_${id}`,
+		    name: `group_${item.name}`,
+//		rotation: 0
+	    });
+
+	    var bgImage = new Image();//Html Image background image
+
+	    bgImage.onload = function () {
+		    let img = generateImage(this,
+				    {
+					    x: circle.getX() + endPointer.x - imgSize / 2,
+					    y: circle.getY() + endPointer.y - imgSize / 2,
+				    },
+				    {
+					    w: 110,
+					    h: 110
+				    });//Konva Image
+		    img.setName(`bgImage_${item.name}`);
+		    img.setId(`bgImage_${id}`);
+		    group.add(img)
+
+	    };
+	    bgImage.src = require('../assets/img/signed_block.png');
+
+	    var signedUser = new Konva.Text({
+		    x: circle.getX() + endPointer.x - imgSize / 2 + 30,
+		    y: circle.getY() + endPointer.y - imgSize / 2 + 45,
+		    text: '10',
+		    fontSize: 30,
+		    fontFamily: 'Calibri',
+		    fill: 'black',
+		    fontStyle: 'bold',
+		    align: 'center',
+		    id: `signedUser_${id}`,
+		    name: `signedUser_${item.name}`,
+	    });
+	    var totalUser = new Konva.Text({
+		    x: circle.getX() + endPointer.x + 15,
+		    y: circle.getY() + endPointer.y + 10,
+		    text: '20',
+		    fontSize: 30,
+		    fontStyle: 'bold',
+		    fontFamily: 'Calibri',
+		    fill: 'white',
+		    align: 'right',
+		    id: `totalUser_${id}`,
+		    name: `totalUser_${item.name}`,
+	    });
+
+	    var imgDepart = new Image();//Html Image
+	    imgDepart.onload = function () {
+		    let departimg = new Konva.Image({
+			    image: imgDepart,
+			    x: circle.getX() + endPointer.x - imgSize / 2,
+			    y: circle.getY() + endPointer.y + imgSize / 2,//在上个图下方显示部门图片
+
+			    scale: {
+				    x: 0.5,
+				    y: 0.5
+			    }
+		    });
+		    departimg.setName(`imgDepart_${item.name}`);
+		    departimg.setId(`imgDepart_${id}`);
+		    departimg.setHeight(50)
+		    group.add(departimg)
+		    group.add(signedUser);
+		    group.add(totalUser);
+		    layer.add(group);
+		    stage.add(layer);
+	    };
+	    try {
+		    imgDepart.src = require(`../assets/img/depart/${item.imgUrl}`);
+	    } catch (e) {
+		    console.log(e)
+	    }
     }
 
     /*
@@ -274,8 +256,18 @@
 	    });
     }
 
-    import Vue from 'vue'
+    /*
+     * 根据角度算出相应在圆周上的点坐标，后续要以这点为起始点画直线
+     * */
+    function getPointByAngle(centerPoint, r, angle) {
+	    let point = {};
+	    //从centerPoint点开始算 r时，过圆心上的圆周交点坐标x=r*sin(angle),y=r*cos(angle)
+	    point.x = Math.sin(angle * Math.PI / 180) * r + centerPoint.x;
+	    point.y = centerPoint.y - Math.cos(angle * Math.PI / 180) * r;
+	    return point;
+    }
 
+    import Vue from 'vue'
     var _this
     export default {
 	    name: "StaffSignPage",
@@ -288,7 +280,28 @@
 
 		    }
 	    },
-	    methods: {},
+	    methods: {
+		    updateData(data)
+		    {
+			    _this.playAnimation();
+		    },
+
+		    playAnimation()
+		    {
+			    let bgImage = stage.find('#bgImage_1')[0];
+			    var tween = new Konva.Tween({
+				    node: bgImage,
+				    duration: 1,
+				    opacity: 0.6,
+				    scaleX: 1.5
+			    });
+
+			    // start tween after 2 seconds
+			    setTimeout(function () {
+				    tween.play();
+			    }, 500);
+		    }
+	    },
 	    computed: {},
 	    filters: {},
 	    created: function () {
