@@ -12,7 +12,6 @@
                 <span >{{currentTime}}</span >
             </el-row >
         </div >
-        <!--<StaffPage ref="staffPage" ></StaffPage >-->
         <StaffSignPage ref="staffPage" ></StaffSignPage >
     </div >
 
@@ -160,12 +159,10 @@
     var _this;
     var currentInterval;
     import Vue from 'vue'
-    import StaffPage from '../components/staff_page.vue';
     import StaffSignPage from '../components/staffsign_page.vue';
     export default {
 	    name: "home",
 	    components: {
-		    StaffPage,
 		    StaffSignPage,
 	    },
 	    data() {
