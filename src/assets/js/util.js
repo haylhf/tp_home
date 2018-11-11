@@ -189,6 +189,36 @@ function addCommandsForToolBox(docXML, command, type) {
 	return docXML;
 }
 
+/*
+ * 返回当前是否是闰年
+ * */
+function isLeapYear(Year) {
+	if (((Year % 4) == 0) && ((Year % 100) != 0) || ((Year % 400) == 0)) {
+		return (true);
+	} else { return (false); }
+}
+
+function getDaysByMonth(year, month) {
+
+	let days = 31;
+	switch (month) {
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			days = 30;
+			break;
+		case 2:
+			days = 28;
+			if (isLeapYear(year)) { //闰年
+				days = 29;
+			}
+			break;
+		default:
+			break;
+	}
+	return days;
+}
 
 String.prototype.replaceAll = function (s1, s2) {
 	return this.replace(new RegExp(s1, "gm"), s2);
