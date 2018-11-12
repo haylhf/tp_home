@@ -14,7 +14,7 @@
     var stage = null;
     var layer = null;
     var circle = null;
-    var imgSize = 110;
+    var imgSize = 80;
 
     $(document).ready(function () {
 	    loadData();
@@ -124,18 +124,25 @@
      *
      */
     function addDispartToUI(angle, item, id) {
-//		let arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius() / 2, rootWidth / 2);
-	    let arrowLength = getRandomInt(rootWidth / 2 - imgSize, rootWidth / 2 + imgSize);//这里可以位置的调整取值范围
+
+	    let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2);//这里可以位置的调整取值范围
+
+	    if (id % 2 == 0) {
+		    arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2);
+	    }
 
 	    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
-	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - imgSize, angle);// 结束点，角度不变，仅长度变长。
+	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - imgSize / 2, angle);// 结束点，角度不变，仅长度变长。
 
+	    let slope = (endPointer.y - startPointer.y) / (endPointer.x - startPointer.x); //斜率
 	    if (Math.abs(endPointer.x) >= rootWidth / 2 - imgSize / 2) {
 		    if (endPointer.x < 0) {
 			    endPointer.x += Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
 		    } else {
 			    endPointer.x -= Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
 		    }
+		    endPointer.y = slope * endPointer.x;
+
 	    }
 	    if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize / 2) {
 		    if (endPointer.y < 0) {
@@ -143,6 +150,7 @@
 		    } else {
 			    endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
 		    }
+		    endPointer.x = endPointer.y / slope;
 	    }
 
 	    //circle.attrs
@@ -165,6 +173,7 @@
 	    var group = new Konva.Group({
 		    x: 0,
 		    y: 0,
+		    opacity: 0.6,
 		    id: `group_${id}`,
 		    name: `group_${item.name}`,
 //		rotation: 0
@@ -179,8 +188,8 @@
 					    y: circle.getY() + endPointer.y - imgSize / 2,
 				    },
 				    {
-					    w: 110,
-					    h: 110
+					    w: imgSize,
+					    h: imgSize
 				    });//Konva Image
 		    img.setName(`bgImage_${item.name}`);
 		    img.setId(`bgImage_${id}`);
@@ -190,10 +199,10 @@
 	    bgImage.src = require('../assets/img/signed_block.png');
 
 	    var signedUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x - imgSize / 2 + 30,
-		    y: circle.getY() + endPointer.y - imgSize / 2 + 45,
+		    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
+		    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
 		    text: '10',
-		    fontSize: 30,
+		    fontSize: 24,
 		    fontFamily: 'Calibri',
 		    fill: 'black',
 		    fontStyle: 'bold',
@@ -202,10 +211,10 @@
 		    name: `signedUser_${item.name}`,
 	    });
 	    var totalUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x + 15,
-		    y: circle.getY() + endPointer.y + 10,
+		    x: circle.getX() + endPointer.x + 12,
+		    y: circle.getY() + endPointer.y + 5,
 		    text: '20',
-		    fontSize: 30,
+		    fontSize: 24,
 		    fontStyle: 'bold',
 		    fontFamily: 'Calibri',
 		    fill: 'white',
@@ -226,6 +235,9 @@
 				    y: 0.5
 			    }
 		    });
+		    if (departimg.getX() + departimg.getWidth() >= rootWidth) {
+			    departimg.offsetX((departimg.getX() + departimg.getWidth() - rootWidth));
+		    }
 		    departimg.setName(`imgDepart_${item.name}`);
 		    departimg.setId(`imgDepart_${id}`);
 		    departimg.setHeight(50)
