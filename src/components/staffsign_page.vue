@@ -231,9 +231,9 @@
 		    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y], //
 		    pointerLength: 0,//不显示箭头
 		    pointerWidth: 0,//不显示箭头
-		    fill: '#EE6911',
-		    stroke: '#EE6911',
+		    stroke: '#DF6911',
 		    strokeWidth: 2,
+		    opacity: 0.5,
 		    id: `arrowLine_${id}`,
 		    name: `arrowLine_${item.name}`,
 	    });
@@ -242,10 +242,9 @@
 	    var group = new Konva.Group({
 		    x: 0,
 		    y: 0,
-		    opacity: 0.6,
+		    opacity: 0.7,
 		    id: `group_${id}`,
 		    name: `group_${item.name}`,
-//		rotation: 0
 	    });
 
 	    var bgImage = new Image();//Html Image background image
@@ -363,7 +362,7 @@
 	    methods: {
 		    updateData(data)
 		    {
-			    _this.playAnimation();
+			    _this.playAnimation("23");
 		    },
 		    updateDateImage()
 		    {
@@ -404,28 +403,102 @@
 			    drawCurrentDayImage(currentDay);
 		    },
 
-		    playAnimation()
+		    playAnimation(id)
 		    {
-			    let bgImage = stage.find('#bgImage_1')[0];
-			    var tween = new Konva.Tween({
+			    let rate = 0.2;
+
+			    let arrowLine = stage.find('#arrowLine_' + id)[0];
+			    let points = arrowLine.getPoints();
+			    let endPointer = {
+				    x: points[2] * (1 - rate), //需要拉近 坐标变小
+				    y: points[3] * (1 - rate)
+			    }
+			    var tweenArrowLine = new Konva.Tween({
+				    node: arrowLine,
+				    duration: 1,
+				    opacity: 1,
+                    stroke: '#EE8000',
+				    points: [points[0], points[1], endPointer.x, endPointer.y], //
+			    });
+
+			    let bgImage = stage.find('#bgImage_' + id)[0];
+
+			    var tweenBgImage = new Konva.Tween({
 				    node: bgImage,
 				    duration: 1,
 				    opacity: 1,
-				    scaleX: 1.2,
-				    scaleY: 1.2,
+				    x: circle.getX() + endPointer.x - imgSize / 2,
+				    y: circle.getY() + endPointer.y - imgSize / 2,
+				    scaleX: bgImage.getAbsoluteScale().x * (1 + rate),
+				    scaleY: bgImage.getAbsoluteScale().y * (1 + rate),
 			    });
 
-			    // start tween after 2 seconds
-			    setTimeout(function () {
-				    tween.play();
-			    }, 500);
-
-			    let signedUser = stage.find('#signedUser_1')[0];
+			    let signedUser = stage.find('#signedUser_' + id)[0];
 			    if (signedUser) {
 				    signedUser.setText("15");
 			    }
+
+			    var tweenSignedUser = new Konva.Tween({
+				    node: signedUser,
+				    duration: 1,
+				    opacity: 1,
+				    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
+				    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
+				    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
+				    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
+//				    x: signedUser.getX() + signedUser.getWidth() * rate,
+//				    y: signedUser.getY() + signedUser.getHeight() * rate,
+			    });
+
+			    let totalUser = stage.find('#totalUser_' + id)[0];
+			    if (totalUser) {
+				    totalUser.setText("30");
+			    }
+			    var tweenTotalUser = new Konva.Tween({
+				    node: totalUser,
+				    duration: 1,
+				    opacity: 1,
+				    scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
+				    scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
+				    x: circle.getX() + endPointer.x + 20,
+				    y: circle.getY() + endPointer.y + 15,
+//				    x: totalUser.getX() + totalUser.getWidth() * rate,
+//				    y: totalUser.getY() + totalUser.getHeight() * rate,
+			    });
+
+			    let imgDepart = stage.find('#imgDepart_' + id)[0];
+			    var tweenImgDepart = new Konva.Tween({
+				    node: imgDepart,
+				    duration: 1,
+				    opacity: 1,
+				    scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
+				    scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
+				    x: circle.getX() + endPointer.x - imgSize / 2,
+				    y: circle.getY() + endPointer.y + imgSize / 2 + 20,
+//				    x: imgDepart.getX() + imgSize * rate - 20,
+//				    y: imgDepart.getY() + imgSize * rate,
+			    });
+
+
+			    let group = stage.find('#group_' + id)[0];
+			    var tweenGroup = new Konva.Tween({
+				    node: group,
+				    duration: 1,
+				    opacity: 1,
+			    });
+
+			    setTimeout(function () {
+				    tweenBgImage.play();
+				    tweenSignedUser.play();
+				    tweenTotalUser.play();
+				    tweenImgDepart.play();
+				    tweenGroup.play();
+				    tweenArrowLine.play();
+			    }, 500);
+
 		    }
 	    },
+
 	    computed: {},
 	    filters: {},
 	    created: function () {
