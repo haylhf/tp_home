@@ -13,6 +13,7 @@
     var rootHeight = window.innerHeight;
     var stage = null;
     var layer = null;
+    var dateLayer = null;
     var circle = null;
     var imgSize = 80;
 
@@ -36,8 +37,7 @@
 		    });
 		    dimg.setName(`currentDayImage`);
 		    dimg.setId(`currentDayImage`);
-		    layer.add(dimg);
-		    stage.add(layer);
+            dateLayer.add(dimg);
 	    };
 	    let currentDayImageName = `circle_date_${currentDay}.png`;
 	    if (currentDay.toString().length == 1) {
@@ -59,8 +59,7 @@
 		    });
 		    dimg.setName(`dayImage`);
 		    dimg.setId(`dayImage`);
-		    layer.add(dimg);
-		    stage.add(layer);
+            dateLayer.add(dimg);
 	    };
 	    let dayImageName = `circle_date_all_${allays}.png`;
 	    dayImage.src = require('../assets/img/' + dayImageName);
@@ -80,7 +79,7 @@
 				    });//Konva Image
 		    mimg.setName(`currentMonthImage`);
 		    mimg.setId(`currentMonthImage`);
-		    layer.add(mimg);
+            dateLayer.add(mimg);
 	    };
 	    let currentMonthImageName = `circl_month_${currentMonth}.png`;
 	    if (currentMonth.toString().length == 1) {
@@ -104,7 +103,7 @@
 				    });//Konva Image
 		    mimg.setName(`monthImage`);
 		    mimg.setId(`monthImage`);
-		    layer.add(mimg);
+            dateLayer.add(mimg);
 	    };
 	    monthImage.src = require('../assets/img/circl_month_all.png');
     }
@@ -124,7 +123,7 @@
 				    });//Konva Image
 		    img.setName(`circleImage`);
 		    img.setId(`circleImage`);
-		    layer.add(img);
+            dateLayer.add(img);
 	    };
 	    circleImage.src = require('../assets/img/bg_mid_round.png');
     }
@@ -134,6 +133,11 @@
 	    if (layer && layer != null) {
 		    layer.clear();
 	    }
+
+	    if (dateLayer && dateLayer != null) {
+		    dateLayer.clear();
+	    }
+
 	    if (stage && stage != null) {
 		    stage.clear();
 	    }
@@ -146,11 +150,12 @@
 		    height: rootHeight,
 
 	    });
-	    stage.on('click', function (e) {
+	    stage.on('click', function (e) {//Test
 		    _this.updateData()
 	    });
 
 	    layer = new Konva.Layer();
+	    dateLayer = new Konva.Layer();
 	    let r = 100
 	    circle = new Konva.Circle({
 		    x: stage.getWidth() / 2,
@@ -160,7 +165,9 @@
 		    stroke: 'white',
 		    strokeWidth: 2
 	    });
-	    layer.add(circle);
+        dateLayer.add(circle);
+
+        circle.hide();
 
 	    drawCircleImage();
 
@@ -176,7 +183,6 @@
 	    drawAllDaysImage(allays);
 
 	    drawCurrentDayImage(currentDay);
-
 
 	    let angle = 360 / DISPART_LIST.length;// 算出每一个对象所要显示在圆周上的角度
 	    /*
@@ -313,7 +319,8 @@
 		    group.add(signedUser);
 		    group.add(totalUser);
 		    layer.add(group);
-		    stage.add(layer);
+            stage.add(layer);
+            stage.add(dateLayer);
 	    };
 	    try {
 		    imgDepart.src = require(`../assets/img/depart/${item.imgUrl}`);
@@ -373,7 +380,6 @@
 			    _this.updateAllDaysImage(allays);
 			    _this.updateCurrentMonthImage(m);
 			    _this.updateCurrentDayImage(d);
-
 		    },
 
 		    updateAllDaysImage(allays)
@@ -417,8 +423,8 @@
 				    node: arrowLine,
 				    duration: 1,
 				    opacity: 1,
-                    stroke: '#EE8000',
-				    points: [points[0], points[1], endPointer.x, endPointer.y], //
+				    stroke: '#EE8000',
+				    points: [points[0], points[1], endPointer.x, endPointer.y],
 			    });
 
 			    let bgImage = stage.find('#bgImage_' + id)[0];
