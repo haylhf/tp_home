@@ -446,44 +446,25 @@
 		    },
 
 		    //有人刷卡，数据更新了，将执行动画
-		    playZoominAnimation(index) {
-//			    let isNeedPlay = false;
-//			    for (let i = 0; i < departmentList.length; i++) {
-//				    if (i == index) {
-//					    if (!departmentList[i].isZoomIn || departmentList[i].isZoomIn == false) {
-//						    isNeedPlay = true;
-//						    break;
-//					    }
-//				    }
-//			    }
-//			    if (!isNeedPlay) {
-//				    return;
-//			    }
+		    playZoominAnimation(index, signedData) {
 			    let signedUser = stage.find('#signedUser_' + index)[0];
 			    if (signedUser) {
-				    signedUser.setText(index.toString());
+				    signedUser.setText(index.toString()); //更新相应部门刷卡人数
 			    }
 
 			    let totalUser = stage.find('#totalUser_' + index)[0];
 			    if (totalUser) {
-				    totalUser.setText("30");
+				    totalUser.setText("30"); //更新相应部门总人数
+			    }
+
+			    let percentNumber = stage.find('#percentNumber')[0];
+			    if (percentNumber) {
+				    //percentNumber.setText("30"); //更新百分比数字
 			    }
 
 			    if (departmentList[index].isZoomIn && departmentList[index].isZoomIn == true) {
-				    let tweenSignedText = new Konva.Tween({
-					    node: signedUser,
-					    duration: 0.5,
-				    });
-				    let tweenTotalText = new Konva.Tween({
-					    node: totalUser,
-					    duration: 0.5,
-				    });
-				    tweenSignedText.play();
-				    tweenTotalText.play();
+				    layer.draw(); //re-draw the UI,update text
 				    return;
-			    }
-			    if (signedUser) {
-				    signedUser.setText("18");
 			    }
 
 			    let rate = 0.2;
@@ -511,6 +492,10 @@
 				    y: circle.getY() + endPointer.y - imgSize / 2,
 				    scaleX: bgImage.getAbsoluteScale().x * (1 + rate),
 				    scaleY: bgImage.getAbsoluteScale().y * (1 + rate),
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenBgImage.destroy();
+				    }
 			    });
 
 
@@ -522,8 +507,10 @@
 				    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
 				    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
 				    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
-//				    x: signedUser.getX() + signedUser.getWidth() * rate,
-//				    y: signedUser.getY() + signedUser.getHeight() * rate,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenSignedUser.destroy();
+				    }
 			    });
 
 
@@ -535,8 +522,10 @@
 				    scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
 				    x: circle.getX() + endPointer.x + 20,
 				    y: circle.getY() + endPointer.y + 15,
-//				    x: totalUser.getX() + totalUser.getWidth() * rate,
-//				    y: totalUser.getY() + totalUser.getHeight() * rate,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenTotalUser.destroy();
+				    }
 			    });
 
 			    let imgDepart = stage.find('#imgDepart_' + index)[0];
@@ -548,6 +537,10 @@
 				    scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
 				    x: circle.getX() + endPointer.x - imgSize / 2,
 				    y: circle.getY() + endPointer.y + imgSize / 2 + 20,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenImgDepart.destroy();
+				    }
 			    });
 
 
@@ -556,6 +549,9 @@
 				    node: group,
 				    duration: 1,
 				    opacity: 1,
+				    onFinish: function () {
+					    tweenGroup.destroy();
+				    }
 			    });
 			    departmentList[index].isZoomIn = true;
 			    departmentList[index].updateTime = new Date();
@@ -566,7 +562,6 @@
 				    tweenImgDepart.play();
 				    tweenGroup.play();
 				    tweenArrowLine.play();
-
 			    }, 500);
 		    },
 
@@ -587,6 +582,10 @@
 				    opacity: 1,
 				    stroke: '#EE8000',
 				    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenArrowLine.destroy();
+				    }
 			    });
 
 
@@ -595,6 +594,10 @@
 				    node: group,
 				    duration: 1,
 				    opacity: 0.7,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenGroup.destroy();
+				    }
 			    });
 
 			    let bgImage = stage.find('#bgImage_' + index)[0];
@@ -607,6 +610,10 @@
 				    scaleY: 1,
 				    x: circle.getX() + endPointer.x - imgSize / 2,
 				    y: circle.getY() + endPointer.y - imgSize / 2,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenBgImage.destroy();
+				    }
 			    });
 
 			    let signedUser = stage.find('#signedUser_' + index)[0];
@@ -618,6 +625,10 @@
 				    scaleY: 1,
 				    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
 				    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenSignedUser.destroy();
+				    }
 			    });
 
 			    let totalUser = stage.find('#totalUser_' + index)[0];
@@ -629,6 +640,10 @@
 				    scaleY: 1,
 				    x: circle.getX() + endPointer.x + 12,
 				    y: circle.getY() + endPointer.y + 5,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenTotalUser.destroy();
+				    }
 			    });
 
 			    let imgDepart = stage.find('#imgDepart_' + index)[0];
@@ -640,6 +655,10 @@
 				    scaleY: 0.5,
 				    x: circle.getX() + endPointer.x - imgSize / 2,
 				    y: circle.getY() + endPointer.y + imgSize / 2,
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenImgDepart.destroy();
+				    }
 			    });
 
 			    departmentList[index].isZoomIn = false;
