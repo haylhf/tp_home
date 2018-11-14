@@ -16,7 +16,7 @@ const STATISTICS_DATE_MODE = {
     DAY: 2
 }
 
-const DISPART_LIST = [
+const DEPARTMENT_LIST = [
     {
         name: "Office",
         text: "办公室",
