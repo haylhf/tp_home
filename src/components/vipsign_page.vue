@@ -13,8 +13,9 @@
     var layer = null;
     var dateLayer = null;
     var circle = null;
-    var imgSize = 80;
-    var departmentList = DEPARTMENT_LIST;
+    var userImgSize = 110;
+    var vipsignList = [];
+    const MaxCount = 10;
 
     $(document).ready(function () {
 	    loadData();
@@ -123,45 +124,27 @@
 		    img.setName(`circleImage`);
 		    img.setId(`circleImage`);
 		    dateLayer.add(img);
-		    drawPercent();
-		    drawPercentNumber();
+		    drawWelcome();
 	    };
 	    circleImage.src = require('../assets/img/bg_mid_round.png');
     }
 
-    function drawPercentNumber() {
-	    var percentNumber = new Konva.Text({
-		    x: stage.getWidth() / 2 - 50,
-		    y: stage.getHeight() / 2 - 80,
-		    text: '99',
-		    fontSize: 100,
-		    fontFamily: 'Calibri',
-		    fontStyle: 'bold',
-		    align: 'center',
-		    id: `percentNumber`,
-		    name: `percentNumber`,
-		    fillLinearGradientColorStops: [0, 'white', 0, 'rgb(150,5,13)'],
-		    // fillRadialGradientColorStops: [0.8, 'rgb(150,5,13)', 1, 'white'],
-		    fillLinearGradientStartPoint: {x: 0, y: 0},
-		    fillLinearGradientEndPoint: {x: 0, y: 100},
-	    });
-	    dateLayer.add(percentNumber);
-    }
-
-    function drawPercent() {
-	    var percent = new Konva.Text({
-		    x: stage.getWidth() / 2 + 60,
-		    y: stage.getHeight() / 2 - 20,
-		    text: '%',
-		    fontSize: 20,
-		    fontFamily: 'Calibri',
-		    fontStyle: 'bold',
-		    align: 'center',
-		    id: `percent`,
-		    name: `percent`,
-		    fill: 'rgb(150,5,13)',
-	    });
-	    dateLayer.add(percent);
+    function drawWelcome() {
+	    var welcomeImage = new Image();//Html Image
+	    welcomeImage.onload = function () {
+		    let img = new Konva.Image({
+			    image: welcomeImage,
+			    x: stage.getWidth() / 2 - 50,
+			    y: stage.getHeight() / 2 - 50,
+			    width: 100,
+			    height: 50,
+		    });
+		    img.setName(`welcomeImage`);
+		    img.setId(`welcomeImage`);
+		    dateLayer.add(img);
+		    stage.draw();
+	    };
+	    welcomeImage.src = require('../assets/img/text_welcome.png');
     }
 
     function loadData() {
@@ -220,12 +203,16 @@
 
 	    drawCurrentDayImage(currentDay);
 
-
 	    /*
 	     *  根据部门对象列表循环添加到UI图层上
 	     * */
-	    for (let i = 0; i < departmentList.length; i++) {
-		    addDepartmentToUI(departmentList[i], i);
+	    for (let i = 0; i < MaxCount; i++) {
+		    let data = {
+			    updateTime: new Date(),
+			    index: i,
+		    };
+		    addDepartmentToUI(data, i);
+
 	    }
 
     }
@@ -235,39 +222,40 @@
      *
      */
     function generateEndPointer(index, startPointer) {
-	    let angle = 360 / departmentList.length * index;
+	    let angle = 360 / MaxCount * index;
 	    let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2);//这里可以位置的调整取值范围
+	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - userImgSize / 2 - 100, angle);// 外圏结束点，角度不变，仅长度变长。需要考虑右边还有VIP及名字的显示+100
 
-	    if (index % 2 == 0) {
+	    if (index % 5 == 0) {
 		    arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2);
+		    endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - userImgSize / 2 - 20, angle); //内圏
 	    }
 
-	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - imgSize / 2, angle);// 结束点，角度不变，仅长度变长。
 
 	    let slope = (endPointer.y - startPointer.y) / (endPointer.x - startPointer.x); //斜率
-	    if (Math.abs(endPointer.x) >= rootWidth / 2 - imgSize / 2) {
+	    if (Math.abs(endPointer.x) >= rootWidth / 2 - userImgSize / 2) {
 		    if (endPointer.x < 0) {
-			    endPointer.x += Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
+			    endPointer.x += Math.abs(endPointer.x) - (rootWidth / 2 - userImgSize / 2);
 		    } else {
-			    endPointer.x -= Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
+			    endPointer.x -= Math.abs(endPointer.x) - (rootWidth / 2 - userImgSize / 2);
 		    }
 		    endPointer.y = slope * endPointer.x;
 
 	    }
-	    if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize / 2) {
+	    if (Math.abs(endPointer.y) >= rootHeight / 2 - userImgSize / 2) {
 		    if (endPointer.y < 0) {
-			    endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
+			    endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize);
 		    } else {
-			    endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
+			    endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize);
 		    }
 		    endPointer.x = endPointer.y / slope;
 	    }
 	    return endPointer;
     }
 
-    function addDepartmentToUI(item, index) {
-
-	    let angle = 360 / departmentList.length * index;// 算出每一个对象所要显示在圆周上的角度
+    function addDepartmentToUI(item) {
+	    let index = item.index;
+	    let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
 	    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
 	    var endPointer = generateEndPointer(index, startPointer);
 
@@ -284,7 +272,6 @@
 		    strokeWidth: 2,
 		    opacity: 0.5,
 		    id: `arrowLine_${index}`,
-		    name: `arrowLine_${item.name}`,
 	    });
 	    layer.add(arrowLine);
 
@@ -293,83 +280,63 @@
 		    y: 0,
 		    opacity: 0.7,
 		    id: `group_${index}`,
-		    name: `group_${item.name}`,
 	    });
 
-	    var bgImage = new Image();//Html Image background image
-
-	    bgImage.onload = function () {
-		    let img = generateImage(this,
-				    {
-					    x: circle.getX() + endPointer.x - imgSize / 2,
-					    y: circle.getY() + endPointer.y - imgSize / 2,
-				    },
-				    {
-					    w: imgSize,
-					    h: imgSize
-				    });//Konva Image
-		    img.setName(`bgImage_${item.name}`);
-		    img.setId(`bgImage_${index}`);
-		    group.add(img)
-
+	    let userCircle = new Konva.Circle({
+		    x: circle.getX() + endPointer.x,
+		    y: circle.getY() + endPointer.y,
+		    radius: userImgSize / 2, //半径
+		    fill: '',
+		    stroke: 'rgb(255,105,42)',
+		    strokeWidth: 4,
+		    id: `userCircle_${index}`,
+		    fillPatternOffset: {x: 100, y: 100},
+		    fillPatternRepeat: 'no-repeat',
+		    fillPatternScale: {
+			    x: 0.5,
+			    y: 0.5,
+		    }
+	    });
+	    let imageObj = new Image();
+	    imageObj.onload = function () {
+		    userCircle.fillPatternImage(imageObj);
 	    };
-	    bgImage.src = require('../assets/img/signed_block.png');
+
+	    imageObj.src = require('../assets/img/male.png');
 
 	    var signedUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-		    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
-		    text: '10',
-		    fontSize: 24,
+		    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
+		    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2 + 40,
+		    text: 'Test',//TODO
+		    fontSize: 30,
 		    fontFamily: 'Calibri',
-		    // fill: 'black',
+		    fill: 'White',
 		    fontStyle: 'bold',
 		    align: 'center',
 		    id: `signedUser_${index}`,
-		    name: `signedUser_${item.name}`,
-	    });
-	    var totalUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x + 12,
-		    y: circle.getY() + endPointer.y + 5,
-		    text: '20',
-		    fontSize: 24,
-		    fontStyle: 'bold',
-		    fontFamily: 'Calibri',
-		    fill: 'white',
-		    align: 'right',
-		    id: `totalUser_${index}`,
-		    name: `totalUser_${item.name}`,
 	    });
 
-	    var imgDepart = new Image();//Html Image
-	    imgDepart.onload = function () {
-		    let departimg = new Konva.Image({
-			    image: imgDepart,
-			    x: circle.getX() + endPointer.x - imgSize / 2,
-			    y: circle.getY() + endPointer.y + imgSize / 2,//在上个图下方显示部门图片
-
-			    scale: {
-				    x: 0.5,
-				    y: 0.5
-			    }
+	    var vipImage = new Image();//Html Image
+	    vipImage.onload = function () {
+		    let img = new Konva.Image({
+			    image: vipImage,
+			    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
+			    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2,
+			    width: 50,
+			    height: 25,
+			    id: `vipImage_${index}`
 		    });
-		    if (departimg.getX() + departimg.getWidth() >= rootWidth) {
-			    departimg.offsetX((departimg.getX() + departimg.getWidth() - rootWidth));
-		    }
-		    departimg.setName(`imgDepart_${item.name}`);
-		    departimg.setId(`imgDepart_${index}`);
-		    departimg.setHeight(50)
-		    group.add(departimg)
+		    group.add(img);
 		    group.add(signedUser);
-		    group.add(totalUser);
+		    group.add(userCircle);
 		    layer.add(group);
 		    stage.add(layer);
 		    stage.add(dateLayer);
+		    vipsignList.push(item);
+		    _this.playZoominAnimation(item);
+
 	    };
-	    try {
-		    imgDepart.src = require(`../assets/img/depart/${item.imgUrl}`);
-	    } catch (e) {
-		    console.log(e)
-	    }
+	    vipImage.src = require(`../assets/img/vip_tips.png`);
     }
 
     /*
@@ -401,7 +368,7 @@
     var currentInterval = 0;
     var _this
     export default {
-	    name: "StaffSignPage",
+	    name: "VipSignPage",
 	    components: {},
 	    data() {
 		    _this = this;
@@ -409,7 +376,42 @@
 	    },
 	    methods: {
 		    updateData(data) {
-			    _this.playZoominAnimation("5");
+			    if (vipsignList.length >= MaxCount) {
+				    _this.playAnimationToReset(vipsignList[0]);
+				    vipsignList.splice(0, 1);
+			    }
+			    setTimeout(()=> {
+				    let index = -1;
+				    if (vipsignList.length == 0) {
+					    index = 0;
+				    }
+				    else {
+					    for (let i = 0; i < MaxCount; i++) {
+						    let isFound = false;
+						    for (let item of vipsignList) {
+							    if (item.index == i) {
+								    isFound = true;
+								    break;
+							    }
+						    }
+						    if (!isFound) {
+							    index = i;
+							    break;
+						    }
+					    }
+				    }
+				    if (index == -1) {
+					    _this.playAnimationToReset(vipsignList[0]);
+					    vipsignList.splice(0, 1);
+					    index = 0;
+				    }
+				    let itemData = {
+					    updateTime: new Date(),
+					    index: index,
+				    };
+				    addDepartmentToUI(itemData);
+				    stage.draw();
+			    }, 200);
 		    },
 		    updateDateImage() {
 			    let date = new Date();
@@ -446,27 +448,8 @@
 		    },
 
 		    //有人刷卡，数据更新了，将执行动画
-		    playZoominAnimation(index, signedData) {
-			    let signedUser = stage.find('#signedUser_' + index)[0];
-			    if (signedUser) {
-				    signedUser.setText(index.toString()); //更新相应部门刷卡人数
-			    }
-
-			    let totalUser = stage.find('#totalUser_' + index)[0];
-			    if (totalUser) {
-				    totalUser.setText("30"); //更新相应部门总人数
-			    }
-
-			    let percentNumber = stage.find('#percentNumber')[0];
-			    if (percentNumber) {
-				    //percentNumber.setText("30"); //更新百分比数字
-			    }
-
-			    if (departmentList[index].isZoomIn && departmentList[index].isZoomIn == true) {
-				    layer.draw(); //re-draw the UI,update text
-				    return;
-			    }
-
+		    playZoominAnimation(item) {
+			    let index = item.index;
 			    let rate = 0.2;
 			    let arrowLine = stage.find('#arrowLine_' + index)[0];
 			    let points = arrowLine.getPoints();
@@ -476,200 +459,93 @@
 			    }
 			    var tweenArrowLine = new Konva.Tween({
 				    node: arrowLine,
-				    duration: 1,
+				    duration: 0.8,
 				    opacity: 1,
 				    stroke: '#EE8000',
 				    points: [points[0], points[1], endPointer.x, endPointer.y],
 			    });
 
-			    let bgImage = stage.find('#bgImage_' + index)[0];
+			    let userCircle = stage.find('#userCircle_' + index)[0];
 
-			    var tweenBgImage = new Konva.Tween({
-				    node: bgImage,
-				    duration: 1,
+			    var tweenUserCircle = new Konva.Tween({
+				    node: userCircle,
+				    duration: 0.8,
 				    opacity: 1,
-				    x: circle.getX() + endPointer.x - imgSize / 2,
-				    y: circle.getY() + endPointer.y - imgSize / 2,
-				    scaleX: bgImage.getAbsoluteScale().x * (1 + rate),
-				    scaleY: bgImage.getAbsoluteScale().y * (1 + rate),
+				    x: circle.getX() + endPointer.x,
+				    y: circle.getY() + endPointer.y,
+				    scaleX: userCircle.getAbsoluteScale().x * (1 + rate),
+				    scaleY: userCircle.getAbsoluteScale().y * (1 + rate),
+				    fillPatternScale: {
+					    x: 1,
+					    y: 1,
+				    },
 				    onFinish: function () {
 					    // remove all references from Konva
-					    tweenBgImage.destroy();
-				    }
-			    });
-
-
-			    var tweenSignedUser = new Konva.Tween({
-				    node: signedUser,
-				    duration: 1,
-				    opacity: 1,
-				    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
-				    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-				    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenSignedUser.destroy();
-				    }
-			    });
-
-
-			    var tweenTotalUser = new Konva.Tween({
-				    node: totalUser,
-				    duration: 1,
-				    opacity: 1,
-				    scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
-				    scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + endPointer.x + 20,
-				    y: circle.getY() + endPointer.y + 15,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenTotalUser.destroy();
-				    }
-			    });
-
-			    let imgDepart = stage.find('#imgDepart_' + index)[0];
-			    var tweenImgDepart = new Konva.Tween({
-				    node: imgDepart,
-				    duration: 1,
-				    opacity: 1,
-				    scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
-				    scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + endPointer.x - imgSize / 2,
-				    y: circle.getY() + endPointer.y + imgSize / 2 + 20,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenImgDepart.destroy();
-				    }
-			    });
-
-
-			    let group = stage.find('#group_' + index)[0];
-			    var tweenGroup = new Konva.Tween({
-				    node: group,
-				    duration: 1,
-				    opacity: 1,
-				    onFinish: function () {
-					    tweenGroup.destroy();
-				    }
-			    });
-			    departmentList[index].isZoomIn = true;
-			    departmentList[index].updateTime = new Date();
-			    setTimeout(function () {
-				    tweenBgImage.play();
-				    tweenSignedUser.play();
-				    tweenTotalUser.play();
-				    tweenImgDepart.play();
-				    tweenGroup.play();
-				    tweenArrowLine.play();
-			    }, 500);
-		    },
-
-		    //重置状态，部门变小回退到原来位置
-		    playAnimationToReset(index) {
-			    if (!(departmentList[index].isZoomIn && departmentList[index].isZoomIn == true)) {
-				    return;
-			    }
-
-			    let angle = 360 / departmentList.length * index;// 算出每一个对象所要显示在圆周上的角度
-			    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
-			    var endPointer = generateEndPointer(index, startPointer);
-
-			    let arrowLine = stage.find('#arrowLine_' + index)[0];
-			    var tweenArrowLine = new Konva.Tween({
-				    node: arrowLine,
-				    duration: 1,
-				    opacity: 1,
-				    stroke: '#EE8000',
-				    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenArrowLine.destroy();
-				    }
-			    });
-
-
-			    let group = stage.find('#group_' + index)[0];
-			    var tweenGroup = new Konva.Tween({
-				    node: group,
-				    duration: 1,
-				    opacity: 0.7,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenGroup.destroy();
-				    }
-			    });
-
-			    let bgImage = stage.find('#bgImage_' + index)[0];
-
-			    var tweenBgImage = new Konva.Tween({
-				    node: bgImage,
-				    duration: 1,
-				    opacity: 1,
-				    scaleX: 1,
-				    scaleY: 1,
-				    x: circle.getX() + endPointer.x - imgSize / 2,
-				    y: circle.getY() + endPointer.y - imgSize / 2,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenBgImage.destroy();
+					    tweenUserCircle.destroy();
 				    }
 			    });
 
 			    let signedUser = stage.find('#signedUser_' + index)[0];
 			    var tweenSignedUser = new Konva.Tween({
 				    node: signedUser,
-				    duration: 1,
+				    duration: 0.8,
 				    opacity: 1,
-				    scaleX: 1,
-				    scaleY: 1,
-				    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-				    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
+				    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
+				    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
+				    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
+				    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2 + 40,
 				    onFinish: function () {
 					    // remove all references from Konva
 					    tweenSignedUser.destroy();
 				    }
 			    });
 
-			    let totalUser = stage.find('#totalUser_' + index)[0];
-			    var tweenTotalUser = new Konva.Tween({
-				    node: totalUser,
-				    duration: 1,
+			    let vipImage = stage.find('#vipImage_' + index)[0];
+			    var tweenVipImage = new Konva.Tween({
+				    node: vipImage,
+				    duration: 0.8,
 				    opacity: 1,
-				    scaleX: 1,
-				    scaleY: 1,
-				    x: circle.getX() + endPointer.x + 12,
-				    y: circle.getY() + endPointer.y + 5,
+				    scaleX: vipImage.getAbsoluteScale().x * (1 + rate),
+				    scaleY: vipImage.getAbsoluteScale().y * (1 + rate),
+				    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
+				    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2,
 				    onFinish: function () {
 					    // remove all references from Konva
-					    tweenTotalUser.destroy();
+					    tweenVipImage.destroy();
 				    }
 			    });
 
-			    let imgDepart = stage.find('#imgDepart_' + index)[0];
-			    var tweenImgDepart = new Konva.Tween({
-				    node: imgDepart,
-				    duration: 1,
+
+			    let group = stage.find('#group_' + index)[0];
+			    var tweenGroup = new Konva.Tween({
+				    node: group,
+				    duration: 0.8,
 				    opacity: 1,
-				    scaleX: 0.5,
-				    scaleY: 0.5,
-				    x: circle.getX() + endPointer.x - imgSize / 2,
-				    y: circle.getY() + endPointer.y + imgSize / 2,
 				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenImgDepart.destroy();
+					    tweenGroup.destroy();
 				    }
 			    });
-
-			    departmentList[index].isZoomIn = false;
 			    setTimeout(function () {
-				    tweenBgImage.play();
+				    tweenUserCircle.play();
 				    tweenSignedUser.play();
-				    tweenTotalUser.play();
-				    tweenImgDepart.play();
+				    tweenVipImage.play();
 				    tweenGroup.play();
 				    tweenArrowLine.play();
-			    }, 500);
+			    }, 50);
+		    },
+
+		    //重置状态，部门变小回退到原来位置
+		    playAnimationToReset(item) {
+			    let index = item.index;
+			    let arrowLine = stage.find('#arrowLine_' + index)[0];
+			    if (arrowLine) {
+				    arrowLine.remove();
+			    }
+			    let group = stage.find('#group_' + index)[0];
+			    if (group) {
+				    group.remove();
+			    }
+			    stage.draw();
 		    }
 	    },
 
@@ -681,26 +557,36 @@
 	    mounted: function () {
 		    console.log('mounted')
 		    currentInterval = setInterval(function updateTime() {
-			    for (let i = 0; i < departmentList.length; i++) {
-				    if (departmentList[i].updateTime) {
-					    let dtime = new Date() - departmentList[i].updateTime;  // 计算时间差
-					    let diffTimes = Math.floor(dtime / (60 * 1000)); //算出总的分钟数差值
-					    if (diffTimes >= 1) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
-						    if (departmentList[i].isZoomIn && departmentList[i].isZoomIn == true) {
-							    _this.playAnimationToReset(i);
+			    try {
+				    let delaytime = 60;
+				    if (vipsignList.length >= MaxCount - 2) {
+					    delaytime = 10;
+				    }
+				    else if (vipsignList.length >= MaxCount - 5 && vipsignList.length <= MaxCount - 2) {
+					    delaytime = 10 * 3;
+				    }
+
+				    for (let i = 0; i < vipsignList.length; i++) {
+					    if (vipsignList[i].updateTime) {
+						    let dtime = new Date() - vipsignList[i].updateTime;  // 计算时间差
+						    let diffTimes = Math.floor(dtime / 1000); //算出总的分钟数差值
+						    if (diffTimes >= delaytime) {//delaytime 秒内没有人刷卡，则部门变小回退到原来位置
+							    _this.playAnimationToReset(vipsignList[i]);
+							    vipsignList.splice(i, 1);
+							    break;
 						    }
 					    }
 				    }
+			    } catch (ex) {
+				    console.log(ex);
 			    }
-
-
-		    }, 30 * 1000);//定时器每1分钟检查一次
+		    }, 8 * 1000);//定时器每分钟检查一次
 	    },
 	    destroyed: function () {
 		    window.clearInterval(currentInterval);
-            layer.destroy();
-            dateLayer.destroy();
-            stage.destroy();
+		    layer.destroy();
+		    dateLayer.destroy();
+		    stage.destroy();
 	    }
     }
 

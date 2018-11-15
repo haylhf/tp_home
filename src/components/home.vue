@@ -12,7 +12,9 @@
                 <span >{{currentTime}}</span >
             </el-row >
         </div >
-        <StaffSignPage ref="staffPage" ></StaffSignPage >
+        <VipSignPage ref="vipPage" v-if="isShowVIP"></VipSignPage>
+        <StaffSignPage ref="staffPage" v-else></StaffSignPage >
+
     </div >
 
 </template >
@@ -163,10 +165,13 @@
 	 var currentInterval;
 	 import Vue from 'vue'
 	 import StaffSignPage from '../components/staffsign_page.vue';
-	 export default {
+     import VipSignPage from '../components/vipsign_page.vue';
+
+     export default {
 		 name: "home",
 		 components: {
 			 StaffSignPage,
+             VipSignPage,
 		 },
 		 data() {
 			 _this = this;
@@ -176,7 +181,7 @@
 				 currentTime: "",
 				 staffNum: 0,
 				 signInNum: 0,
-				 isShowVIP: false,
+				 isShowVIP: true,
 				 bgImg: require('../assets/img/main.png'),
 				 currentDate: '',
 			 }
