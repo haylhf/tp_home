@@ -13,50 +13,6 @@ var NORMAL = 1;
 var EXPERT = 2;
 var CLASS = 3;
 
-
-/**
- * 需求单状态
- */
-	//合同创建完成，未提交审核
-let ORDER_INITIAL = 0;
-//审核中
-let ORDER_CHECKING = 1;
-//审核完成
-let ORDER_CHECKING_FINISHED = 2;
-//已改单
-let ORDER_CHANGED = 3;
-//已拆单
-let ORDER_SPLITED = 4;
-//已驳回
-let ORDER_REJECTED = 5;
-//已取消
-let ORDER_CANCELED = 6;
-
-/**
- * 合同状态
- */
-	//合同创建完成，未提交审核
-let CONTRACT_INITIAL = 0;
-//审核中
-let CONTRACT_CHECKING = 1;
-//审核完成
-let CONTRACT_CHECKING_FINISHED = 2;
-//已改单
-let CONTRACT_CHANGED = 3;
-//已拆单
-let CONTRACT_SPLITED = 4;
-//已驳回
-let CONTRACT_REJECTED = 5;
-//已取消
-let CONTRACT_CANCELED = 6;
-
-/**
- * 签核结果：“0”-->初始化；“1”-->接受； “2”-->驳回
- */
-let SIGN_INITIAL = 0;
-let SIGN_APPROVE = 1;
-let SIGN_REJECT = 2;
-
 /**
  *计划方式: 日计划、弹性计划
  */

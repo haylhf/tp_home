@@ -1,6 +1,6 @@
 <template xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml" >
     <div >
-        <div id="container" ></div >
+        <div id="container_vip" ></div >
     </div >
 
 </template >
@@ -38,6 +38,7 @@
 		    dimg.setName(`currentDayImage`);
 		    dimg.setId(`currentDayImage`);
 		    dateLayer.add(dimg);
+		    stage.add(dateLayer);
 	    };
 	    let currentDayImageName = `circle_date_${currentDay}.png`;
 	    if (currentDay.toString().length == 1) {
@@ -164,15 +165,11 @@
 	    rootWidth = window.innerWidth;
 	    rootHeight = window.innerHeight;
 	    stage = new Konva.Stage({
-		    container: 'container',
+		    container: 'container_vip',
 		    width: rootWidth,
 		    height: rootHeight,
 
 	    });
-	    stage.on('click', function (e) {//Test
-		    _this.updateData()
-	    });
-
 	    layer = new Konva.Layer();
 	    dateLayer = new Konva.Layer();
 	    let r = 100
@@ -203,18 +200,42 @@
 
 	    drawCurrentDayImage(currentDay);
 
-	    /*
-	     *  根据部门对象列表循环添加到UI图层上
-	     * */
-	    for (let i = 0; i < MaxCount; i++) {
-		    let data = {
-			    updateTime: new Date(),
-			    index: i,
-		    };
-		    addDepartmentToUI(data, i);
-
-	    }
-
+	    stage.on('click', function (e) {//Test TODO
+		    _this.updateData([
+			    {
+				    "birthday": "string",
+				    "company": "string",
+				    "employed_date": "string",
+				    "id": "string",
+				    "identity_number": "string",
+				    "name": "Hello LHF",
+				    "phone": "string",
+				    "remark": "string",
+				    "visit_end_timestamp": 0,
+				    "visit_purpose": "0",
+				    "visit_start_timestamp": 0,
+				    "visit_time_type": "0",
+				    "visitee_name": "string",
+				    "photo": require('../assets/img/male.png'),
+			    },
+//			    {
+//				    "birthday": "string",
+//				    "company": "string",
+//				    "employed_date": "string",
+//				    "id": "string",
+//				    "identity_number": "string",
+//				    "name": "Hello HT",
+//				    "phone": "string",
+//				    "remark": "string",
+//				    "visit_end_timestamp": 0,
+//				    "visit_purpose": "0",
+//				    "visit_start_timestamp": 0,
+//				    "visit_time_type": "0",
+//				    "visitee_name": "string",
+//				    "photo": require('../assets/img/male.png'),
+//			    }
+		    ])
+	    });
     }
 
     /*
@@ -256,7 +277,7 @@
     function addDepartmentToUI(item) {
 	    let index = item.index;
 	    let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
-	    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
+	    let startPointer = getPointByAngle({x: 0, y: 0}, 320 / 2, angle); //线起始点，随着角度变化
 	    var endPointer = generateEndPointer(index, startPointer);
 
 	    //circle.attrs
@@ -275,6 +296,7 @@
 	    });
 	    layer.add(arrowLine);
 
+
 	    var group = new Konva.Group({
 		    x: 0,
 		    y: 0,
@@ -282,9 +304,10 @@
 		    id: `group_${index}`,
 	    });
 
+	    let circlePointer = getPointByAngle(endPointer, userImgSize / 2, angle);
 	    let userCircle = new Konva.Circle({
-		    x: circle.getX() + endPointer.x,
-		    y: circle.getY() + endPointer.y,
+		    x: circle.getX() + circlePointer.x,
+		    y: circle.getY() + circlePointer.y,
 		    radius: userImgSize / 2, //半径
 		    fill: '',
 		    stroke: 'rgb(255,105,42)',
@@ -302,13 +325,13 @@
 		    userCircle.fillPatternImage(imageObj);
 	    };
 
-	    imageObj.src = require('../assets/img/male.png');
+	    imageObj.src = item.photo;//require('../assets/img/male.png');
 
 	    var signedUser = new Konva.Text({
-		    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
-		    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2 + 40,
-		    text: 'Test',//TODO
-		    fontSize: 30,
+		    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+		    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 40,
+		    text: item.name,//TODO
+		    fontSize: 24,
 		    fontFamily: 'Calibri',
 		    fill: 'White',
 		    fontStyle: 'bold',
@@ -320,8 +343,8 @@
 	    vipImage.onload = function () {
 		    let img = new Konva.Image({
 			    image: vipImage,
-			    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
-			    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2,
+			    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+			    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
 			    width: 50,
 			    height: 25,
 			    id: `vipImage_${index}`
@@ -331,7 +354,6 @@
 		    group.add(userCircle);
 		    layer.add(group);
 		    stage.add(layer);
-		    stage.add(dateLayer);
 		    vipsignList.push(item);
 		    _this.playZoominAnimation(item);
 
@@ -344,6 +366,9 @@
      *  Note：这不是Html上 的image
      * */
     function generateImage(img, pointer, size) {
+	    if (!img) {
+		    return null;
+	    }
 	    return new Konva.Image({
 		    image: img,
 		    x: pointer.x,
@@ -372,47 +397,81 @@
 	    components: {},
 	    data() {
 		    _this = this;
-		    return {}
+		    return {
+			    isLoading: false,
+		    }
 	    },
 	    methods: {
-		    updateData(data) {
+		    updateData(dataList) {
+			    _this.isLoading = true;
+			    if (!dataList || dataList.length == 0) {
+				    return;
+			    }
+
 			    if (vipsignList.length >= MaxCount) {
 				    _this.playAnimationToReset(vipsignList[0]);
 				    vipsignList.splice(0, 1);
 			    }
+			    console.log(`[vipsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
+			    for (let i = 0; i < 1; i++) {
+				    _this.updateDataToUI(dataList[i], dataList, (itemList)=> {
+					    _this.isLoading = false;
+					    if (!itemList || itemList.length == 0) {
+						    return;
+					    }
+					    _this.updateData(itemList);
+				    });
+				    break
+			    }
+		    },
+
+		    updateDataToUI(data, dataList, callback)
+		    {
 			    setTimeout(()=> {
-				    let index = -1;
-				    if (vipsignList.length == 0) {
-					    index = 0;
-				    }
-				    else {
-					    for (let i = 0; i < MaxCount; i++) {
-						    let isFound = false;
-						    for (let item of vipsignList) {
-							    if (item.index == i) {
-								    isFound = true;
-								    break;
-							    }
-						    }
-						    if (!isFound) {
-							    index = i;
+				    var index = _this.getAvailableIndex();
+				    let itemData = Object.assign(data, {
+					    updateTime: new Date(),
+					    index: index,
+				    });
+				    addDepartmentToUI(itemData);
+				    stage.draw();
+
+				    dataList.splice(0, 1);
+				    callback(dataList);
+			    }, 200)
+		    },
+
+		    getAvailableIndex: function () {
+			    let index = -1;
+			    if (vipsignList.length == 0) {
+				    index = 0;
+			    }
+			    else {
+				    for (let i = 0; i < MaxCount; i++) {
+					    let isFound = false;
+					    for (let item of vipsignList) {
+						    if (item.index == i) {
+							    isFound = true;
 							    break;
 						    }
 					    }
+					    if (!isFound) {
+						    index = i;
+						    break;
+					    }
 				    }
-				    if (index == -1) {
+			    }
+			    if (index == -1) {
+				    if (vipsignList.length > 0) {
+					    index = vipsignList[0].index;
 					    _this.playAnimationToReset(vipsignList[0]);
 					    vipsignList.splice(0, 1);
-					    index = 0;
+					    sleep(100);
 				    }
-				    let itemData = {
-					    updateTime: new Date(),
-					    index: index,
-				    };
-				    addDepartmentToUI(itemData);
-				    stage.draw();
-			    }, 200);
+			    }
+			    return index;
 		    },
+
 		    updateDateImage() {
 			    let date = new Date();
 			    let m = date.getMonth() + 1;//从 Date 对象返回月份 (0 ~ 11)
@@ -463,16 +522,21 @@
 				    opacity: 1,
 				    stroke: '#EE8000',
 				    points: [points[0], points[1], endPointer.x, endPointer.y],
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenArrowLine.destroy();
+				    }
 			    });
 
 			    let userCircle = stage.find('#userCircle_' + index)[0];
-
+                let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
+                let circlePointer = getPointByAngle(endPointer, userImgSize / 2, angle);
 			    var tweenUserCircle = new Konva.Tween({
 				    node: userCircle,
 				    duration: 0.8,
 				    opacity: 1,
-				    x: circle.getX() + endPointer.x,
-				    y: circle.getY() + endPointer.y,
+				    x: circle.getX() + circlePointer.x,
+				    y: circle.getY() + circlePointer.y,
 				    scaleX: userCircle.getAbsoluteScale().x * (1 + rate),
 				    scaleY: userCircle.getAbsoluteScale().y * (1 + rate),
 				    fillPatternScale: {
@@ -492,8 +556,8 @@
 				    opacity: 1,
 				    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
 				    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
-				    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2 + 40,
+				    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+				    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 40,
 				    onFinish: function () {
 					    // remove all references from Konva
 					    tweenSignedUser.destroy();
@@ -507,8 +571,8 @@
 				    opacity: 1,
 				    scaleX: vipImage.getAbsoluteScale().x * (1 + rate),
 				    scaleY: vipImage.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + endPointer.x - userCircle.getRadius() / 2 + 100,
-				    y: circle.getY() + endPointer.y - userCircle.getRadius() / 2,
+				    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+				    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
 				    onFinish: function () {
 					    // remove all references from Konva
 					    tweenVipImage.destroy();
@@ -526,6 +590,7 @@
 				    }
 			    });
 			    setTimeout(function () {
+
 				    tweenUserCircle.play();
 				    tweenSignedUser.play();
 				    tweenVipImage.play();
@@ -537,6 +602,7 @@
 		    //重置状态，部门变小回退到原来位置
 		    playAnimationToReset(item) {
 			    let index = item.index;
+			    console.log(`playAnimationToReset index: ${index}`);
 			    let arrowLine = stage.find('#arrowLine_' + index)[0];
 			    if (arrowLine) {
 				    arrowLine.remove();
@@ -565,12 +631,17 @@
 				    else if (vipsignList.length >= MaxCount - 5 && vipsignList.length <= MaxCount - 2) {
 					    delaytime = 10 * 3;
 				    }
-
+				    if (_this.isLoading) {
+					    return;
+				    }
 				    for (let i = 0; i < vipsignList.length; i++) {
 					    if (vipsignList[i].updateTime) {
 						    let dtime = new Date() - vipsignList[i].updateTime;  // 计算时间差
 						    let diffTimes = Math.floor(dtime / 1000); //算出总的分钟数差值
 						    if (diffTimes >= delaytime) {//delaytime 秒内没有人刷卡，则部门变小回退到原来位置
+							    if (_this.isLoading) {
+								    break;
+							    }
 							    _this.playAnimationToReset(vipsignList[i]);
 							    vipsignList.splice(i, 1);
 							    break;

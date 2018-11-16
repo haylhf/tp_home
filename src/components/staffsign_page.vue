@@ -186,10 +186,6 @@
 		    height: rootHeight,
 
 	    });
-	    stage.on('click', function (e) {//Test
-		    _this.updateData()
-	    });
-
 	    layer = new Konva.Layer();
 	    dateLayer = new Konva.Layer();
 	    let r = 100
@@ -228,6 +224,22 @@
 		    addDepartmentToUI(departmentList[i], i);
 	    }
 
+	    stage.on('click', function (e) {//Test TODO
+		    let num = getRandomInt(0, departmentList.length - 2)//Test TODO
+
+		    _this.updateData([
+			    {
+				    tagId: departmentList[num].text,
+				    totalNum: 50,
+				    currentNum: 30,
+			    },
+			    {
+				    tagId: departmentList[num + 1].text,
+				    totalNum: 50,
+				    currentNum: 20,
+			    }
+		    ])
+	    });
     }
 
     /*
@@ -292,6 +304,7 @@
 		    x: 0,
 		    y: 0,
 		    opacity: 0.7,
+
 		    id: `group_${index}`,
 		    name: `group_${item.name}`,
 	    });
@@ -299,15 +312,13 @@
 	    var bgImage = new Image();//Html Image background image
 
 	    bgImage.onload = function () {
-		    let img = generateImage(this,
-				    {
-					    x: circle.getX() + endPointer.x - imgSize / 2,
-					    y: circle.getY() + endPointer.y - imgSize / 2,
-				    },
-				    {
-					    w: imgSize,
-					    h: imgSize
-				    });//Konva Image
+		    let img = new Konva.Image({
+			    image: bgImage,
+			    x: circle.getX() + endPointer.x - imgSize / 2,
+			    y: circle.getY() + endPointer.y - imgSize / 2,
+			    width: imgSize,
+			    height: imgSize,
+		    });
 		    img.setName(`bgImage_${item.name}`);
 		    img.setId(`bgImage_${index}`);
 		    group.add(img)
@@ -408,9 +419,40 @@
 		    return {}
 	    },
 	    methods: {
-		    updateData(data) {
-			    _this.playZoominAnimation("5");
+		    updateData(dataList) {
+			    if (!dataList || dataList.length == 0) {
+				    return;
+			    }
+			    console.log(`[staffsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
+			    for (let i = 0; i < 1; dataList++) {
+				    _this.updateDataToUI(dataList[i], dataList, (itemList)=> {
+					    if (!itemList || itemList.length == 0) {
+						    return;
+					    }
+					    _this.updateData(itemList);
+				    });
+				    break;
+			    }
+
 		    },
+
+		    updateDataToUI(data, dataList, callback)
+		    {
+			    setTimeout(()=> {
+
+				    for (let i = 0; i < departmentList.length; i++) {
+					    if ((departmentList[i].tagId && departmentList[i].tagId == data.tagId) ||
+							    (departmentList[i].text == data.tagId)) {
+						    departmentList[i] = Object.assign(departmentList[i], data);
+						    _this.playZoominAnimation(i, departmentList[i]);
+						    break;
+					    }
+				    }
+				    dataList.splice(0, 1);
+				    callback(dataList);
+			    }, 200)
+		    },
+
 		    updateDateImage() {
 			    let date = new Date();
 			    let m = date.getMonth() + 1;//从 Date 对象返回月份 (0 ~ 11)
@@ -447,14 +489,16 @@
 
 		    //有人刷卡，数据更新了，将执行动画
 		    playZoominAnimation(index, signedData) {
+			    console.log(`playZoominAnimation index:${index}\r\nsignedData:\r\n${JSON.stringify(signedData)}`);
+
 			    let signedUser = stage.find('#signedUser_' + index)[0];
 			    if (signedUser) {
-				    signedUser.setText(index.toString()); //更新相应部门刷卡人数
+				    signedUser.setText(signedData.currentNum.toString()); //更新相应部门刷卡人数
 			    }
 
 			    let totalUser = stage.find('#totalUser_' + index)[0];
 			    if (totalUser) {
-				    totalUser.setText("30"); //更新相应部门总人数
+				    totalUser.setText(signedData.totalNum.toString()); //更新相应部门总人数
 			    }
 
 			    let percentNumber = stage.find('#percentNumber')[0];
@@ -480,6 +524,10 @@
 				    opacity: 1,
 				    stroke: '#EE8000',
 				    points: [points[0], points[1], endPointer.x, endPointer.y],
+                    onFinish: function () {
+                        // remove all references from Konva
+                        tweenArrowLine.destroy();
+                    }
 			    });
 
 			    let bgImage = stage.find('#bgImage_' + index)[0];
@@ -684,8 +732,8 @@
 			    for (let i = 0; i < departmentList.length; i++) {
 				    if (departmentList[i].updateTime) {
 					    let dtime = new Date() - departmentList[i].updateTime;  // 计算时间差
-					    let diffTimes = Math.floor(dtime / (60 * 1000)); //算出总的分钟数差值
-					    if (diffTimes >= 1) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
+					    let diffTimes = Math.floor(dtime / 1000); //算出总的分钟数差值
+					    if (diffTimes >= 30) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
 						    if (departmentList[i].isZoomIn && departmentList[i].isZoomIn == true) {
 							    _this.playAnimationToReset(i);
 						    }
@@ -694,13 +742,13 @@
 			    }
 
 
-		    }, 30 * 1000);//定时器每1分钟检查一次
+		    }, 10 * 1000);//定时器每1分钟检查一次
 	    },
 	    destroyed: function () {
 		    window.clearInterval(currentInterval);
-            layer.destroy();
-            dateLayer.destroy();
-            stage.destroy();
+		    layer.destroy();
+		    dateLayer.destroy();
+		    stage.destroy();
 	    }
     }
 

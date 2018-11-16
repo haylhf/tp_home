@@ -4,7 +4,7 @@
              style="width: 100%;height: 100%;position: absolute;z-index: -100; background-position: center;" />
         <div class="homeDiv" >
             <el-row >
-                    <span style="font-size: 36px;" @click="btnTest" >签到：</span >
+                    <span style="font-size: 36px;" >签到：</span >
                     <span style="font-size: 36px;" >{{getSignIn()}}</span >
             </el-row >
             <br />
@@ -12,8 +12,10 @@
                 <span >{{currentTime}}</span >
             </el-row >
         </div >
-        <VipSignPage ref="vipPage" v-if="isShowVIP"></VipSignPage>
-        <StaffSignPage ref="staffPage" v-else></StaffSignPage >
+
+        <VipSignPage ref="vipPage" v-if="isShowVIP" ></VipSignPage >
+        <StaffSignPage ref="staffPage" v-else ></StaffSignPage >
+
 
     </div >
 
@@ -105,9 +107,6 @@
 		 } catch (e) {
 			 console.log(e);
 		 }
-		 while (isLoading) {
-			 sleep(1000); //wait;
-		 }
 		 if (data != null) {
 			 switch (message.destinationName) {
 				 case ServerTOPIC[0]: //statff
@@ -116,7 +115,7 @@
 					 break;
 				 case ServerTOPIC[1]://vip
 					 _this.isShowVIP = true;
-					 onVisitorSign(data);
+					 onShowVipUI(data);
 					 break;
 				 default:
 					 console.log("未知主题消息...")
@@ -126,58 +125,47 @@
 		 }
 	 }
 
-	 function onVisitorSign(signDataList) {
-		 isLoading = true;
+	 function onShowVipUI(signDataList) {
 		 var dataList = [];
-		 try {
-			 console.log(signDataList.length)
-			 for (let i = 0; i < signDataList.length; i++) {
-
-				 let signData = signDataList[i];
-				 let data = Object.assign(signData.person.person_information);
-				 try {
-					 data.signTime = new Date(signData.timestamp * 1000).format("hh:mm:ss");
-				 } catch (e) {
-				 }
-				 data.device_id = signData.device_id;
-				 data.photo = require('../assets/img/male.png'); //`http://api.vaiwan.com:8081/image/${signData.person.face_list[0].face_image_id}`;
-				 //data.photo = "http://192.168.0.119" + ":9812/image/" + signData.person.face_list[0].face_image_id; //`http://api.vaiwan.com:8081/image/${signData.person.face_list[0].face_image_id}`;
-				 dataList.push(data);
-
+		 for (let i = 0; i < signDataList.length; i++) {
+			 let signData = signDataList[i];
+			 let data = Object.assign(signData.person.person_information);
+			 try {
+				 data.signTime = new Date(signData.timestamp * 1000).format("hh:mm:ss");
+			 } catch (e) {
 			 }
-			 let promise = new Promise(function (resolve, reject) {
-				 if (_this.$refs.staffPage) {
-					 _this.$refs.staffPage.updateData(dataList);
-				 }
-				 resolve();
-			 });
-			 promise.then(() => {
-				 isLoading = false;
-			 });
-		 } catch (e) {
-			 console.log(e)
-		 } finally {
-			 isLoading = false;
+			 data.device_id = signData.device_id;
+			 data.photo = require('../assets/img/male.png'); //`http://api.vaiwan.com:8081/image/${signData.person.face_list[0].face_image_id}`;
+			 //data.photo = "http://192.168.0.119" + ":9812/image/" + signData.person.face_list[0].face_image_id; //`http://api.vaiwan.com:8081/image/${signData.person.face_list[0].face_image_id}`;
+			 dataList.push(data);
+		 }
+		 if (_this.$refs.vipPage && dataList.length > 0) {
+			 _this.$refs.vipPage.updateData(dataList);
+		 }
+	 }
+
+	 function onVisitorSign(signDataList) {
+		 if (_this.$refs.staffPage && signDataList.length > 0) {
+			 _this.$refs.staffPage.updateData(signDataList);
 		 }
 	 }
 
 	 var _this;
 	 var currentInterval;
-	 import Vue from 'vue'
+	 import Vue from 'vue';
 	 import StaffSignPage from '../components/staffsign_page.vue';
-     import VipSignPage from '../components/vipsign_page.vue';
+	 import VipSignPage from '../components/vipsign_page.vue';
 
-     export default {
+	 export default {
 		 name: "home",
 		 components: {
 			 StaffSignPage,
-             VipSignPage,
+			 VipSignPage,
 		 },
 		 data() {
 			 _this = this;
 			 return {
 				 sendText: "Hello mqtt",
-				 title: HOME_SCREEN_TITLE,
 				 currentTime: "",
 				 staffNum: 0,
 				 signInNum: 0,
@@ -187,55 +175,6 @@
 			 }
 		 },
 		 methods: {
-			 btnTest() {
-
-				 onVisitorSign(JSON.parse(`
-[
-  {
-    "device_id": "string",
-    "face_id": "string",
-    "face_image_id": "string",
-    "identity": "STRANGER",
-    "person": {
-      "face_list": [
-        {
-          "face_id": "string",
-          "face_image_id": "string",
-          "scene_image_id": "string"
-        }
-      ],
-      "identity": "STAFF",
-      "meta": {},
-      "person_id": "string",
-      "person_information": {
-        "birthday": "string",
-        "company": "string",
-        "employed_date": "string",
-        "id": "string",
-        "identity_number": "string",
-        "name": "string1",
-        "phone": "string",
-        "remark": "string",
-        "visit_end_timestamp": 0,
-        "visit_purpose": "0",
-        "visit_start_timestamp": 0,
-        "visit_time_type": "0",
-        "visitee_name": "string"
-      },
-      "tag_id_list": [
-        "string"
-      ],
-      "upload_time": 0
-    },
-    "scene_image_id": "string",
-    "score": 0,
-    "timestamp": 0,
-    "track_id": "string"
-  }
-]`
-				 ));//方法1
-			 },
-
 			 onSend() {
 				 let strMsg = _this.sendText;// document.getElementById("msg").value;
 				 if (strMsg) {
@@ -253,7 +192,6 @@
 		 computed: {},
 		 filters: {},
 		 created: function () {
-			 _this = this;
 			 _this.currentDate = new Date();
 		 },
 		 mounted: function () {
@@ -265,6 +203,9 @@
 					 if (_this.$refs.staffPage) {
 						 _this.$refs.staffPage.updateDateImage();
 					 }
+					 if (_this.$refs.vipPage) {
+						 _this.$refs.vipPage.updateDateImage();
+					 }
 				 }
 				 let dtime = new Date() - _this.currentDate;  // 计算时间差
 				 let diffDays = Math.floor(dtime / (24 * 3600 * 1000));
@@ -272,6 +213,9 @@
 					 _this.currentDate = new Date();
 					 if (_this.$refs.staffPage) {
 						 _this.$refs.staffPage.updateDateImage();
+					 }
+					 if (_this.$refs.vipPage) {
+						 _this.$refs.vipPage.updateDateImage();
 					 }
 				 }
 
