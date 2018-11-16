@@ -218,22 +218,22 @@
 				    "visitee_name": "string",
 				    "photo": require('../assets/img/male.png'),
 			    },
-//			    {
-//				    "birthday": "string",
-//				    "company": "string",
-//				    "employed_date": "string",
-//				    "id": "string",
-//				    "identity_number": "string",
-//				    "name": "Hello HT",
-//				    "phone": "string",
-//				    "remark": "string",
-//				    "visit_end_timestamp": 0,
-//				    "visit_purpose": "0",
-//				    "visit_start_timestamp": 0,
-//				    "visit_time_type": "0",
-//				    "visitee_name": "string",
-//				    "photo": require('../assets/img/male.png'),
-//			    }
+			    {
+				    "birthday": "string",
+				    "company": "string",
+				    "employed_date": "string",
+				    "id": "string",
+				    "identity_number": "string",
+				    "name": "Hello HT",
+				    "phone": "string",
+				    "remark": "string",
+				    "visit_end_timestamp": 0,
+				    "visit_purpose": "0",
+				    "visit_start_timestamp": 0,
+				    "visit_time_type": "0",
+				    "visitee_name": "string",
+				    "photo": require('../assets/img/male.png'),
+			    }
 		    ])
 	    });
     }
@@ -508,95 +508,106 @@
 
 		    //有人刷卡，数据更新了，将执行动画
 		    playZoominAnimation(item) {
-			    let index = item.index;
-			    let rate = 0.2;
-			    let arrowLine = stage.find('#arrowLine_' + index)[0];
-			    let points = arrowLine.getPoints();
-			    let endPointer = {
-				    x: points[2] * (1 - rate), //需要拉近 坐标变小
-				    y: points[3] * (1 - rate)
+			    try {
+				    console.log(`playZoominAnimation index:${index}`)
+
+				    let index = item.index;
+				    let rate = 0.2;
+				    let arrowLine = stage.find('#arrowLine_' + index)[0];
+				    let points = arrowLine.getPoints();
+				    let endPointer = {
+					    x: points[2] * (1 - rate), //需要拉近 坐标变小
+					    y: points[3] * (1 - rate)
+				    }
+				    var tweenArrowLine = new Konva.Tween({
+					    node: arrowLine,
+					    duration: 0.8,
+					    opacity: 1,
+					    stroke: '#EE8000',
+					    points: [points[0], points[1], endPointer.x, endPointer.y],
+					    onFinish: function () {
+						    // remove all references from Konva
+						    tweenArrowLine.destroy();
+					    }
+				    });
+
+				    let userCircle = stage.find('#userCircle_' + index)[0];
+				    let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
+				    let circlePointer = getPointByAngle(endPointer, userImgSize / 2, angle);
+				    var tweenUserCircle = new Konva.Tween({
+					    node: userCircle,
+					    duration: 0.8,
+					    opacity: 1,
+					    x: circle.getX() + circlePointer.x,
+					    y: circle.getY() + circlePointer.y,
+					    scaleX: userCircle.getAbsoluteScale().x * (1 + rate),
+					    scaleY: userCircle.getAbsoluteScale().y * (1 + rate),
+					    fillPatternScale: {
+						    x: 1,
+						    y: 1,
+					    },
+					    onFinish: function () {
+						    // remove all references from Konva
+						    tweenUserCircle.destroy();
+					    }
+				    });
+
+				    let signedUser = stage.find('#signedUser_' + index)[0];
+				    var tweenSignedUser = new Konva.Tween({
+					    node: signedUser,
+					    duration: 0.8,
+					    opacity: 1,
+					    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
+					    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
+					    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+					    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 40,
+					    onFinish: function () {
+						    // remove all references from Konva
+						    tweenSignedUser.destroy();
+					    }
+				    });
+
+				    let vipImage = stage.find('#vipImage_' + index)[0];
+				    var tweenVipImage = new Konva.Tween({
+					    node: vipImage,
+					    duration: 0.8,
+					    opacity: 1,
+					    scaleX: vipImage.getAbsoluteScale().x * (1 + rate),
+					    scaleY: vipImage.getAbsoluteScale().y * (1 + rate),
+					    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+					    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
+					    onFinish: function () {
+						    // remove all references from Konva
+						    tweenVipImage.destroy();
+					    }
+				    });
+
+
+				    let group = stage.find('#group_' + index)[0];
+				    var tweenGroup = new Konva.Tween({
+					    node: group,
+					    duration: 0.8,
+					    opacity: 1,
+					    onFinish: function () {
+						    tweenGroup.destroy();
+					    }
+				    });
+
+				    setTimeout(function () {
+					    tweenUserCircle.play();
+					    tweenSignedUser.play();
+					    tweenVipImage.play();
+					    tweenGroup.play();
+					    tweenArrowLine.play();
+				    }, 200);
+			    } catch (ex) {
+				    console.log(ex);
+				    layer.remove();
+				    layer.destroy();
+				    layer = new Konva.Layer();
+				    stage.add(layer);
 			    }
-			    var tweenArrowLine = new Konva.Tween({
-				    node: arrowLine,
-				    duration: 0.8,
-				    opacity: 1,
-				    stroke: '#EE8000',
-				    points: [points[0], points[1], endPointer.x, endPointer.y],
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenArrowLine.destroy();
-				    }
-			    });
 
-			    let userCircle = stage.find('#userCircle_' + index)[0];
-                let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
-                let circlePointer = getPointByAngle(endPointer, userImgSize / 2, angle);
-			    var tweenUserCircle = new Konva.Tween({
-				    node: userCircle,
-				    duration: 0.8,
-				    opacity: 1,
-				    x: circle.getX() + circlePointer.x,
-				    y: circle.getY() + circlePointer.y,
-				    scaleX: userCircle.getAbsoluteScale().x * (1 + rate),
-				    scaleY: userCircle.getAbsoluteScale().y * (1 + rate),
-				    fillPatternScale: {
-					    x: 1,
-					    y: 1,
-				    },
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenUserCircle.destroy();
-				    }
-			    });
-
-			    let signedUser = stage.find('#signedUser_' + index)[0];
-			    var tweenSignedUser = new Konva.Tween({
-				    node: signedUser,
-				    duration: 0.8,
-				    opacity: 1,
-				    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
-				    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
-				    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 40,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenSignedUser.destroy();
-				    }
-			    });
-
-			    let vipImage = stage.find('#vipImage_' + index)[0];
-			    var tweenVipImage = new Konva.Tween({
-				    node: vipImage,
-				    duration: 0.8,
-				    opacity: 1,
-				    scaleX: vipImage.getAbsoluteScale().x * (1 + rate),
-				    scaleY: vipImage.getAbsoluteScale().y * (1 + rate),
-				    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
-				    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
-				    onFinish: function () {
-					    // remove all references from Konva
-					    tweenVipImage.destroy();
-				    }
-			    });
-
-
-			    let group = stage.find('#group_' + index)[0];
-			    var tweenGroup = new Konva.Tween({
-				    node: group,
-				    duration: 0.8,
-				    opacity: 1,
-				    onFinish: function () {
-					    tweenGroup.destroy();
-				    }
-			    });
-			    setTimeout(function () {
-
-				    tweenUserCircle.play();
-				    tweenSignedUser.play();
-				    tweenVipImage.play();
-				    tweenGroup.play();
-				    tweenArrowLine.play();
-			    }, 50);
 		    },
 
 		    //重置状态，部门变小回退到原来位置
