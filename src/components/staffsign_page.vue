@@ -294,7 +294,7 @@
 		    pointerWidth: 0,//不显示箭头
 		    stroke: '#DF6911',
 		    strokeWidth: 2,
-		    opacity: 0.5,
+		    opacity: 0.7,
 		    id: `arrowLine_${index}`,
 		    name: `arrowLine_${item.name}`,
 	    });
@@ -303,8 +303,7 @@
 	    var group = new Konva.Group({
 		    x: 0,
 		    y: 0,
-		    opacity: 0.7,
-
+		    opacity: 1,
 		    id: `group_${index}`,
 		    name: `group_${item.name}`,
 	    });
@@ -318,6 +317,7 @@
 			    y: circle.getY() + endPointer.y - imgSize / 2,
 			    width: imgSize,
 			    height: imgSize,
+			    opacity: 1,
 		    });
 		    img.setName(`bgImage_${item.name}`);
 		    img.setId(`bgImage_${index}`);
@@ -329,8 +329,9 @@
 	    var signedUser = new Konva.Text({
 		    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
 		    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
-		    text: '10',
+		    text: '0',
 		    fontSize: 24,
+		    opacity: 0.7,
 		    fontFamily: 'Calibri',
 		    // fill: 'black',
 		    fontStyle: 'bold',
@@ -341,7 +342,8 @@
 	    var totalUser = new Konva.Text({
 		    x: circle.getX() + endPointer.x + 12,
 		    y: circle.getY() + endPointer.y + 5,
-		    text: '20',
+		    text: '0',
+		    opacity: 0.7,
 		    fontSize: 24,
 		    fontStyle: 'bold',
 		    fontFamily: 'Calibri',
@@ -357,7 +359,7 @@
 			    image: imgDepart,
 			    x: circle.getX() + endPointer.x - imgSize / 2,
 			    y: circle.getY() + endPointer.y + imgSize / 2,//在上个图下方显示部门图片
-
+			    opacity: 0.7,
 			    scale: {
 				    x: 0.5,
 				    y: 0.5
@@ -524,10 +526,10 @@
 				    opacity: 1,
 				    stroke: '#EE8000',
 				    points: [points[0], points[1], endPointer.x, endPointer.y],
-                    onFinish: function () {
-                        // remove all references from Konva
-                        tweenArrowLine.destroy();
-                    }
+				    onFinish: function () {
+					    // remove all references from Konva
+					    tweenArrowLine.destroy();
+				    }
 			    });
 
 			    let bgImage = stage.find('#bgImage_' + index)[0];
@@ -597,6 +599,7 @@
 				    node: group,
 				    duration: 1,
 				    opacity: 1,
+				    zIndex: 100,
 				    onFinish: function () {
 					    tweenGroup.destroy();
 				    }
@@ -627,7 +630,8 @@
 			    var tweenArrowLine = new Konva.Tween({
 				    node: arrowLine,
 				    duration: 1,
-				    opacity: 1,
+				    opacity: 0.5,
+				    zIndex: 0,
 				    stroke: '#EE8000',
 				    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
 				    onFinish: function () {
@@ -641,7 +645,8 @@
 			    var tweenGroup = new Konva.Tween({
 				    node: group,
 				    duration: 1,
-				    opacity: 0.7,
+				    opacity: 1,
+				    zIndex: 0,
 				    onFinish: function () {
 					    // remove all references from Konva
 					    tweenGroup.destroy();
@@ -668,7 +673,7 @@
 			    var tweenSignedUser = new Konva.Tween({
 				    node: signedUser,
 				    duration: 1,
-				    opacity: 1,
+				    opacity: 0.7,
 				    scaleX: 1,
 				    scaleY: 1,
 				    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
@@ -683,7 +688,7 @@
 			    var tweenTotalUser = new Konva.Tween({
 				    node: totalUser,
 				    duration: 1,
-				    opacity: 1,
+				    opacity: 0.7,
 				    scaleX: 1,
 				    scaleY: 1,
 				    x: circle.getX() + endPointer.x + 12,
@@ -698,7 +703,7 @@
 			    var tweenImgDepart = new Konva.Tween({
 				    node: imgDepart,
 				    duration: 1,
-				    opacity: 1,
+				    opacity: 0.7,
 				    scaleX: 0.5,
 				    scaleY: 0.5,
 				    x: circle.getX() + endPointer.x - imgSize / 2,
