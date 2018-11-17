@@ -147,6 +147,11 @@
     function onVisitorSign(signDataList) {
         if (_this.$refs.staffPage && signDataList.length > 0) {
             _this.$refs.staffPage.updateData(signDataList);
+            let percent = 0;
+            if (_this.staffNum != 0) {
+                percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
+            }
+            _this.$refs.staffPage.updatePercentNum(percent);
         }
     }
 

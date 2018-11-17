@@ -132,22 +132,7 @@
     }
 
     function drawPercentNumber() {
-        var percentNumber = new Konva.Text({
-            x: stage.getWidth() / 2 - 50,
-            y: stage.getHeight() / 2 - 80,
-            text: '99',
-            fontSize: 100,
-            fontFamily: 'Calibri',
-            fontStyle: 'bold',
-            align: 'center',
-            id: `percentNumber`,
-            name: `percentNumber`,
-            fillLinearGradientColorStops: [0, 'white', 0, 'rgb(150,5,13)'],
-            // fillRadialGradientColorStops: [0.8, 'rgb(150,5,13)', 1, 'white'],
-            fillLinearGradientStartPoint: {x: 0, y: 0},
-            fillLinearGradientEndPoint: {x: 0, y: 100},
-        });
-        dateLayer.add(percentNumber);
+        _this.updatePercentNum(0);
     }
 
     function drawPercent() {
@@ -423,6 +408,34 @@
             return {}
         },
         methods: {
+            updatePercentNum(num) {
+                let fs = 100;
+                let x = num.toString().length >= 2 ? stage.getWidth() / 2 - 50 : stage.getWidth() / 2 - 30
+                if (num.toString().length == 3) {
+                    x = stage.getWidth() / 2 - 70;
+                    fs = 80
+                }
+                let percentNumber = stage.find('#percentNumber')[0];
+                if (percentNumber) {
+                    percentNumber.remove();
+                }
+                percentNumber = new Konva.Text({
+                    x: x,
+                    y: stage.getHeight() / 2 - 80,
+                    text: num.toString(),
+                    fontSize: fs,
+                    fontFamily: 'Calibri',
+                    fontStyle: 'bold',
+                    align: 'center',
+                    id: `percentNumber`,
+                    name: `percentNumber`,
+                    fillLinearGradientColorStops: [0, 'white', 0, 'rgb(150,5,13)'],
+                    fillLinearGradientStartPoint: {x: 0, y: 0},
+                    fillLinearGradientEndPoint: {x: 0, y: 100},
+                });
+                dateLayer.add(percentNumber);
+                stage.draw();
+            },
             updateData(dataList) {
                 if (!dataList || dataList.length == 0) {
                     return;
@@ -503,11 +516,6 @@
                 let totalUser = stage.find('#totalUser_' + index)[0];
                 if (totalUser) {
                     totalUser.setText(signedData.totalNum.toString()); //更新相应部门总人数
-                }
-
-                let percentNumber = stage.find('#percentNumber')[0];
-                if (percentNumber) {
-                    //percentNumber.setText("30"); //更新百分比数字
                 }
 
                 if (departmentList[index].isZoomIn && departmentList[index].isZoomIn == true) {
