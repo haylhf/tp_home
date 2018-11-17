@@ -520,7 +520,7 @@
                     return;
                 }
 
-                let rate = 0.2;
+                let rate = 0.3;
                 let arrowLine = stage.find('#arrowLine_' + index)[0];
                 let points = arrowLine.getPoints();
                 let startPointer = {
@@ -573,8 +573,8 @@
                     opacity: 1,
                     x: circle.getX() + endPointer.x - imgSize / 2,
                     y: circle.getY() + endPointer.y - imgSize / 2,
-                    scaleX: bgImage.getAbsoluteScale().x * (1 + rate),
-                    scaleY: bgImage.getAbsoluteScale().y * (1 + rate),
+                    scaleX: bgImage.getAbsoluteScale().x * (1 + rate + 0.2),
+                    scaleY: bgImage.getAbsoluteScale().y * (1 + rate + 0.2),
                     onFinish: function () {
                         // remove all references from Konva
                         tweenBgImage.destroy();
@@ -603,8 +603,8 @@
                     opacity: 1,
                     scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
                     scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x + 10,
-                    y: circle.getY() + endPointer.y + 5,
+                    x: circle.getX() + endPointer.x + 20,
+                    y: circle.getY() + endPointer.y + 20,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenTotalUser.destroy();
@@ -619,7 +619,7 @@
                     scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
                     scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
                     x: circle.getX() + endPointer.x - imgSize / 2,
-                    y: circle.getY() + endPointer.y + imgSize / 2 + 12,
+                    y: circle.getY() + endPointer.y + imgSize / 2 + 25,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenImgDepart.destroy();
