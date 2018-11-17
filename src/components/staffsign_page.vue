@@ -13,7 +13,7 @@
     var layer = null;
     var dateLayer = null;
     var circle = null;
-    var imgSize = 80;
+    var imgSize = 50;
     var departmentList = DEPARTMENT_LIST;
 
     $(document).ready(function () {
@@ -31,10 +31,10 @@
         currentDayImage.onload = function () {
             let dimg = new Konva.Image({
                 image: this,
-                x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-                y: Math.round(stage.getHeight() / 2 - 320 / 2),
-                width: 320,
-                height: 320,
+                x: Math.round(stage.getWidth() / 2 - 200 / 2) + 1,
+                y: Math.round(stage.getHeight() / 2 - 200 / 2),
+                width: 200,
+                height: 200,
             });
             dimg.setName(`currentDayImage`);
             dimg.setId(`currentDayImage`);
@@ -53,10 +53,10 @@
         dayImage.onload = function () {
             let dimg = new Konva.Image({
                 image: this,
-                x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-                y: Math.round(stage.getHeight() / 2 - 320 / 2),
-                width: 320,
-                height: 320,
+                x: Math.round(stage.getWidth() / 2 - 200 / 2) + 1,
+                y: Math.round(stage.getHeight() / 2 - 200 / 2),
+                width: 200,
+                height: 200,
             });
             dimg.setName(`dayImage`);
             dimg.setId(`dayImage`);
@@ -71,12 +71,12 @@
         currentMonthImage.onload = function () {
             let mimg = generateImage(this,
                 {
-                    x: stage.getWidth() / 2 - 260 / 2,
-                    y: stage.getHeight() / 2 - 260 / 2,
+                    x: stage.getWidth() / 2 - 160 / 2,
+                    y: stage.getHeight() / 2 - 160 / 2,
                 },
                 {
-                    w: 260,
-                    h: 260
+                    w: 160,
+                    h: 160
                 });//Konva Image
             mimg.setName(`currentMonthImage`);
             mimg.setId(`currentMonthImage`);
@@ -95,12 +95,12 @@
         monthImage.onload = function () {
             let mimg = generateImage(this,
                 {
-                    x: stage.getWidth() / 2 - 260 / 2,
-                    y: stage.getHeight() / 2 - 260 / 2,
+                    x: stage.getWidth() / 2 - 160 / 2,
+                    y: stage.getHeight() / 2 - 160 / 2,
                 },
                 {
-                    w: 260,
-                    h: 260
+                    w: 160,
+                    h: 160
                 });//Konva Image
             mimg.setName(`monthImage`);
             mimg.setId(`monthImage`);
@@ -115,12 +115,12 @@
         circleImage.onload = function () {
             let img = generateImage(this,
                 {
-                    x: stage.getWidth() / 2 - 240 / 2,
-                    y: stage.getHeight() / 2 - 240 / 2,
+                    x: stage.getWidth() / 2 - 180 / 2,
+                    y: stage.getHeight() / 2 - 180 / 2,
                 },
                 {
-                    w: 240,
-                    h: 240
+                    w: 180,
+                    h: 180
                 });//Konva Image
             img.setName(`circleImage`);
             img.setId(`circleImage`);
@@ -137,10 +137,10 @@
 
     function drawPercent() {
         var percent = new Konva.Text({
-            x: stage.getWidth() / 2 + 60,
-            y: stage.getHeight() / 2 - 20,
+            x: stage.getWidth() / 2 + 30,
+            y: stage.getHeight() / 2,
             text: '%',
-            fontSize: 20,
+            fontSize: 14,
             fontFamily: 'Calibri',
             fontStyle: 'bold',
             align: 'center',
@@ -174,7 +174,7 @@
         });
         layer = new Konva.Layer();
         dateLayer = new Konva.Layer();
-        let r = 100
+        let r = 60
         circle = new Konva.Circle({
             x: stage.getWidth() / 2,
             y: stage.getHeight() / 2,
@@ -210,22 +210,22 @@
             addDepartmentToUI(departmentList[i], i);
         }
 
-        stage.on('click', function (e) {//Test TODO
-            let num = getRandomInt(0, departmentList.length - 2)//Test TODO
-
-            _this.updateData([
-                {
-                    tagId: "id1", //departmentList[num].tagId,
-                    totalNum: 50,
-                    currentNum: 30,
-                },
-                {
-                    tagId: "id2",//departmentList[num + 1].tagId,
-                    totalNum: 50,
-                    currentNum: 20,
-                }
-            ])
-        });
+        // stage.on('click', function (e) {//Test TODO
+        //     let num = getRandomInt(0, departmentList.length - 2)//Test TODO
+        //
+        //     _this.updateData([
+        //         {
+        //             tagId: "id1", //departmentList[num].tagId,
+        //             totalNum: 50,
+        //             currentNum: 30,
+        //         },
+        //         {
+        //             tagId: "id2",//departmentList[num + 1].tagId,
+        //             totalNum: 50,
+        //             currentNum: 20,
+        //         }
+        //     ])
+        // });
     }
 
     /*
@@ -280,7 +280,7 @@
             pointerWidth: 0,//不显示箭头
             stroke: '#DF6911',
             strokeWidth: 2,
-            opacity: 0.7,
+            opacity: 0.5,
             id: `arrowLine_${index}`,
             name: `arrowLine_${item.name}`,
         });
@@ -303,7 +303,7 @@
                 y: circle.getY() + endPointer.y - imgSize / 2,
                 width: imgSize,
                 height: imgSize,
-                opacity: 1,
+                opacity: 0.7,
             });
             img.setName(`bgImage_${item.name}`);
             img.setId(`bgImage_${index}`);
@@ -313,11 +313,11 @@
         bgImage.src = require('../assets/img/signed_block.png');
 
         var signedUser = new Konva.Text({
-            x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-            y: circle.getY() + endPointer.y - imgSize / 2 + 30,
+            x: circle.getX() + endPointer.x - imgSize / 2 + 12,
+            y: circle.getY() + endPointer.y - imgSize / 2 + 15,
             text: '0',
-            fontSize: 24,
-            opacity: 0.7,
+            fontSize: 18,
+            opacity: 0.5,
             fontFamily: 'Calibri',
             // fill: 'black',
             fontStyle: 'bold',
@@ -326,11 +326,11 @@
             name: `signedUser_${item.name}`,
         });
         var totalUser = new Konva.Text({
-            x: circle.getX() + endPointer.x + 12,
-            y: circle.getY() + endPointer.y + 5,
+            x: circle.getX() + endPointer.x + 5,
+            y: circle.getY() + endPointer.y + 3,
             text: '0',
-            opacity: 0.7,
-            fontSize: 24,
+            opacity: 0.5,
+            fontSize: 18,
             fontStyle: 'bold',
             fontFamily: 'Calibri',
             fill: 'white',
@@ -344,11 +344,11 @@
             let departimg = new Konva.Image({
                 image: imgDepart,
                 x: circle.getX() + endPointer.x - imgSize / 2,
-                y: circle.getY() + endPointer.y + imgSize / 2,//在上个图下方显示部门图片
-                opacity: 0.7,
+                y: circle.getY() + endPointer.y + imgSize / 2 + 5,//在上个图下方显示部门图片
+                opacity: 0.5,
                 scale: {
-                    x: 0.5,
-                    y: 0.5
+                    x: 0.35,
+                    y: 0.35
                 }
             });
             if (departimg.getX() + departimg.getWidth() >= rootWidth) {
@@ -356,7 +356,7 @@
             }
             departimg.setName(`imgDepart_${item.name}`);
             departimg.setId(`imgDepart_${index}`);
-            departimg.setHeight(50)
+            departimg.setHeight(40)
             group.add(departimg)
             group.add(signedUser);
             group.add(totalUser);
@@ -409,11 +409,11 @@
         },
         methods: {
             updatePercentNum(num) {
-                let fs = 100;
-                let x = num.toString().length >= 2 ? stage.getWidth() / 2 - 50 : stage.getWidth() / 2 - 30
+                let fs = 50;
+                let x = num.toString().length >= 2 ? stage.getWidth() / 2 - 35 : stage.getWidth() / 2 - 15
                 if (num.toString().length == 3) {
-                    x = stage.getWidth() / 2 - 70;
-                    fs = 80
+                    x = stage.getWidth() / 2 - 55;
+                    fs = 30
                 }
                 let percentNumber = stage.find('#percentNumber')[0];
                 if (percentNumber) {
@@ -421,7 +421,7 @@
                 }
                 percentNumber = new Konva.Text({
                     x: x,
-                    y: stage.getHeight() / 2 - 80,
+                    y: stage.getHeight() / 2 - 40,
                     text: num.toString(),
                     fontSize: fs,
                     fontFamily: 'Calibri',
@@ -566,7 +566,7 @@
                     scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
                     scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
                     x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-                    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
+                    y: circle.getY() + endPointer.y - imgSize / 2 + 20,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenSignedUser.destroy();
@@ -580,8 +580,8 @@
                     opacity: 1,
                     scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
                     scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x + 20,
-                    y: circle.getY() + endPointer.y + 15,
+                    x: circle.getX() + endPointer.x + 10,
+                    y: circle.getY() + endPointer.y + 5,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenTotalUser.destroy();
@@ -596,7 +596,7 @@
                     scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
                     scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
                     x: circle.getX() + endPointer.x - imgSize / 2,
-                    y: circle.getY() + endPointer.y + imgSize / 2 + 20,
+                    y: circle.getY() + endPointer.y + imgSize / 2 + 12,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenImgDepart.destroy();
@@ -668,7 +668,7 @@
                 var tweenBgImage = new Konva.Tween({
                     node: bgImage,
                     duration: 1,
-                    opacity: 1,
+                    opacity: 0.7,
                     scaleX: 1,
                     scaleY: 1,
                     x: circle.getX() + endPointer.x - imgSize / 2,
@@ -683,11 +683,11 @@
                 var tweenSignedUser = new Konva.Tween({
                     node: signedUser,
                     duration: 1,
-                    opacity: 0.7,
+                    opacity: 0.5,
                     scaleX: 1,
                     scaleY: 1,
-                    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-                    y: circle.getY() + endPointer.y - imgSize / 2 + 30,
+                    x: circle.getX() + endPointer.x - imgSize / 2 + 12,
+                    y: circle.getY() + endPointer.y - imgSize / 2 + 15,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenSignedUser.destroy();
@@ -698,11 +698,11 @@
                 var tweenTotalUser = new Konva.Tween({
                     node: totalUser,
                     duration: 1,
-                    opacity: 0.7,
+                    opacity: 0.5,
                     scaleX: 1,
                     scaleY: 1,
-                    x: circle.getX() + endPointer.x + 12,
-                    y: circle.getY() + endPointer.y + 5,
+                    x: circle.getX() + endPointer.x + 5,
+                    y: circle.getY() + endPointer.y + 3,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenTotalUser.destroy();
@@ -713,9 +713,9 @@
                 var tweenImgDepart = new Konva.Tween({
                     node: imgDepart,
                     duration: 1,
-                    opacity: 0.7,
-                    scaleX: 0.5,
-                    scaleY: 0.5,
+                    opacity: 0.5,
+                    scaleX: 0.35,
+                    scaleY: 0.35,
                     x: circle.getX() + endPointer.x - imgSize / 2,
                     y: circle.getY() + endPointer.y + imgSize / 2,
                     onFinish: function () {
@@ -740,6 +740,7 @@
         filters: {},
         created: function () {
             console.log('created')
+            _this.mainBgImg = require('../assets/img/main.png');
         },
         mounted: function () {
             console.log('mounted')

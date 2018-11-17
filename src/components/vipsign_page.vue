@@ -8,7 +8,7 @@
                 <div class="form-inline">
                     <img class="el-col-xs-12" v-if="item.photo!=null" :src="item.photo"
                          style="width: 60px;height: 60px; border-radius: 50%;margin-top: 5px;">
-                    <div class="el-col-xs-12" style="color: white;font-size: 16px;margin-top: 24px;margin-left: 5px;">
+                    <div class="el-col-xs-12" style="color: white;font-size: 14px;margin-top: 26px;margin-left: 3px;">
                         {{item.name}}
                     </div>
                 </div>
@@ -27,7 +27,7 @@
     var layer = null;
     var dateLayer = null;
     var circle = null;
-    var userImgSize = 110;
+    var userImgSize = 100;
     var vipsignList = [];
     const MaxCount = 10;
 
@@ -45,10 +45,10 @@
         currentDayImage.onload = function () {
             let dimg = new Konva.Image({
                 image: this,
-                x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-                y: Math.round(stage.getHeight() / 2 - 320 / 2),
-                width: 320,
-                height: 320,
+                x: Math.round(stage.getWidth() / 2 - 200 / 2) + 1,
+                y: Math.round(stage.getHeight() / 2 - 200 / 2),
+                width: 200,
+                height: 200,
             });
             dimg.setName(`currentDayImage`);
             dimg.setId(`currentDayImage`);
@@ -68,10 +68,10 @@
         dayImage.onload = function () {
             let dimg = new Konva.Image({
                 image: this,
-                x: Math.round(stage.getWidth() / 2 - 320 / 2) + 1,
-                y: Math.round(stage.getHeight() / 2 - 320 / 2),
-                width: 320,
-                height: 320,
+                x: Math.round(stage.getWidth() / 2 - 200 / 2) + 1,
+                y: Math.round(stage.getHeight() / 2 - 200 / 2),
+                width: 200,
+                height: 200,
             });
             dimg.setName(`dayImage`);
             dimg.setId(`dayImage`);
@@ -86,12 +86,12 @@
         currentMonthImage.onload = function () {
             let mimg = generateImage(this,
                 {
-                    x: stage.getWidth() / 2 - 260 / 2,
-                    y: stage.getHeight() / 2 - 260 / 2,
+                    x: stage.getWidth() / 2 - 160 / 2,
+                    y: stage.getHeight() / 2 - 160 / 2,
                 },
                 {
-                    w: 260,
-                    h: 260
+                    w: 160,
+                    h: 160
                 });//Konva Image
             mimg.setName(`currentMonthImage`);
             mimg.setId(`currentMonthImage`);
@@ -110,12 +110,12 @@
         monthImage.onload = function () {
             let mimg = generateImage(this,
                 {
-                    x: stage.getWidth() / 2 - 260 / 2,
-                    y: stage.getHeight() / 2 - 260 / 2,
+                    x: stage.getWidth() / 2 - 160 / 2,
+                    y: stage.getHeight() / 2 - 160 / 2,
                 },
                 {
-                    w: 260,
-                    h: 260
+                    w: 160,
+                    h: 160
                 });//Konva Image
             mimg.setName(`monthImage`);
             mimg.setId(`monthImage`);
@@ -130,12 +130,12 @@
         circleImage.onload = function () {
             let img = generateImage(this,
                 {
-                    x: stage.getWidth() / 2 - 240 / 2,
-                    y: stage.getHeight() / 2 - 240 / 2,
+                    x: stage.getWidth() / 2 - 180 / 2,
+                    y: stage.getHeight() / 2 - 180 / 2,
                 },
                 {
-                    w: 240,
-                    h: 240
+                    w: 180,
+                    h: 180
                 });//Konva Image
             img.setName(`circleImage`);
             img.setId(`circleImage`);
@@ -150,10 +150,10 @@
         welcomeImage.onload = function () {
             let img = new Konva.Image({
                 image: welcomeImage,
-                x: stage.getWidth() / 2 - 50,
-                y: stage.getHeight() / 2 - 50,
-                width: 100,
-                height: 50,
+                x: stage.getWidth() / 2 - 40,
+                y: stage.getHeight() / 2 - 25,
+                width: 80,
+                height: 35,
             });
             img.setName(`welcomeImage`);
             img.setId(`welcomeImage`);
@@ -187,7 +187,7 @@
         });
         layer = new Konva.Layer();
         dateLayer = new Konva.Layer();
-        let r = 100
+        let r = 60
         circle = new Konva.Circle({
             x: stage.getWidth() / 2,
             y: stage.getHeight() / 2,
@@ -292,7 +292,7 @@
     function addDepartmentToUI(item) {
         let index = item.index;
         let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
-        let startPointer = getPointByAngle({x: 0, y: 0}, 320 / 2, angle); //线起始点，随着角度变化
+        let startPointer = getPointByAngle({x: 0, y: 0}, 200 / 2, angle); //线起始点，随着角度变化
         var endPointer = generateEndPointer(index, startPointer);
 
         //circle.attrs
@@ -315,7 +315,7 @@
         var group = new Konva.Group({
             x: 0,
             y: 0,
-            opacity: 0.7,
+            opacity: 0.5,
             id: `group_${index}`,
         });
 
@@ -340,16 +340,15 @@
             userCircle.fillPatternImage(imageObj);
         };
 
-        imageObj.src = item.photo;//require('../assets/img/male.png');
+        imageObj.src = photoURL + item.photo;
 
         var signedUser = new Konva.Text({
-            x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
-            y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 40,
+            x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
+            y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
             text: item.name,//TODO
-            fontSize: 24,
+            fontSize: 16,
             fontFamily: 'Calibri',
             fill: 'White',
-            fontStyle: 'bold',
             align: 'center',
             id: `signedUser_${index}`,
         });
@@ -358,10 +357,10 @@
         vipImage.onload = function () {
             let img = new Konva.Image({
                 image: vipImage,
-                x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+                x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
                 y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
-                width: 50,
-                height: 25,
+                width: 35,
+                height: 18,
                 id: `vipImage_${index}`
             });
             group.add(img);
@@ -370,7 +369,7 @@
             layer.add(group);
             stage.add(layer);
             vipsignList.push(item);
-            if (_this.historyList.length >= 10) {
+            if (_this.historyList.length >= 6) {
                 _this.historyList.splice(0, 1);
             }
             _this.historyList.push(item);
@@ -579,8 +578,8 @@
                         opacity: 1,
                         scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
                         scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
-                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
-                        y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 40,
+                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
+                        y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
                         onFinish: function () {
                             // remove all references from Konva
                             tweenSignedUser.destroy();
@@ -594,7 +593,7 @@
                         opacity: 1,
                         scaleX: vipImage.getAbsoluteScale().x * (1 + rate),
                         scaleY: vipImage.getAbsoluteScale().y * (1 + rate),
-                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 100,
+                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
                         y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
                         onFinish: function () {
                             // remove all references from Konva

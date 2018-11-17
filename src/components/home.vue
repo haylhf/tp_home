@@ -4,11 +4,11 @@
              style="width: 100%;height: 100%;position: absolute;z-index: -100; background-position: center;"/>
         <div class="homeDiv">
             <el-row>
-                <span style="font-size: 36px;">签到：</span>
-                <span style="font-size: 36px;">{{getSignIn()}}</span>
+                <span style="font-size: 20px;">签到：</span>
+                <span style="font-size: 20px;">{{getSignIn()}}</span>
             </el-row>
-            <br/>
-            <el-row>
+
+            <el-row style="margin-top: 5px">
                 <span>{{currentTime}}</span>
             </el-row>
         </div>
@@ -26,6 +26,12 @@
         client.connect(options);//连接服务器并注册连接成功处理事件
         client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
         client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
+        window.onclick = () => {
+            requestFullScreen();
+        };
+        window.resize = () => {
+            _this.bgImg = require('../assets/img/main.png');
+        };
     })
     var hostname = MqttServer,
         port = ServerPort,
@@ -81,14 +87,6 @@
         isActived = true;
     };
 
-    window.onclick = () => {
-        //requestFullScreen();
-    };
-    window.onload = function () {
-
-
-    };
-
     function onConnectionLost(responseObject) {
         if (responseObject.errorCode !== 0) {
             console.log("onConnectionLost:" + responseObject.errorMessage);
@@ -135,8 +133,8 @@
             } catch (e) {
             }
             data.device_id = signData.device_id;
-            data.photo = require('../assets/img/male.png'); //`http://api.vaiwan.com:8081/image/${signData.person.face_list[0].face_image_id}`;
-            //data.photo = "http://192.168.0.119" + ":9812/image/" + signData.person.face_list[0].face_image_id; //`http://api.vaiwan.com:8081/image/${signData.person.face_list[0].face_image_id}`;
+            // data.photo = require('../assets/img/male.png');
+            data.photo = signData.person.face_list[0].face_image_id;//http://api.vaiwan.com:8081/image/
             dataList.push(data);
         }
         if (_this.$refs.vipPage && dataList.length > 0) {
@@ -263,8 +261,7 @@
 <style>
     span {
         text-align: center;
-        font-size: 32px;
-        font-weight: bold;
+        font-size: 20px;
         color: white;
     }
 
