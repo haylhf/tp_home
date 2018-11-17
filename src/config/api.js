@@ -4,6 +4,7 @@ var HOST = IP + ":8080/";
 var SYSTEMNAME = "Face";
 var MqttServer = `47.100.9.64`;
 var ServerPort = Number(61623);
+var SOCKECT_SERVER = "ws://172.16.30.30:9090/websocket";
 var ServerTOPIC = ["staff/sign_in", "staff/vip/sign_in"];
 var photoURL = "";
 

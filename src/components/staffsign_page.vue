@@ -210,22 +210,22 @@
             addDepartmentToUI(departmentList[i], i);
         }
 
-        // stage.on('click', function (e) {//Test TODO
-        //     let num = getRandomInt(0, departmentList.length - 2)//Test TODO
-        //
-        //     _this.updateData([
-        //         {
-        //             tagId: "id1", //departmentList[num].tagId,
-        //             totalNum: 50,
-        //             currentNum: 30,
-        //         },
-        //         {
-        //             tagId: "id2",//departmentList[num + 1].tagId,
-        //             totalNum: 50,
-        //             currentNum: 20,
-        //         }
-        //     ])
-        // });
+        stage.on('click', function (e) {//Test TODO
+            let num = getRandomInt(0, departmentList.length - 2)//Test TODO
+
+            _this.updateData([
+                {
+                    tagId: departmentList[num].tagId,
+                    totalNum: 50,
+                    currentNum: 30,
+                },
+                {
+                    tagId: departmentList[num + 1].tagId,
+                    totalNum: 50,
+                    currentNum: 20,
+                }
+            ])
+        });
     }
 
     /*
@@ -234,13 +234,13 @@
      */
     function generateEndPointer(index, startPointer) {
         let angle = 360 / departmentList.length * index;
-        let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2);//这里可以位置的调整取值范围
+        let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2) - imgSize / 2;//这里可以位置的调整取值范围
 
         if (index % 2 == 0) {
-            arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2);
+            arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2) - imgSize / 2;
         }
 
-        let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - imgSize / 2, angle);// 结束点，角度不变，仅长度变长。
+        let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength * 0.7, angle);// 结束点，角度不变，仅长度变长。
 
         let slope = (endPointer.y - startPointer.y) / (endPointer.x - startPointer.x); //斜率
         if (Math.abs(endPointer.x) >= rootWidth / 2 - imgSize / 2) {
@@ -269,9 +269,6 @@
         let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
         var endPointer = generateEndPointer(index, startPointer);
 
-        //circle.attrs
-        let x = Math.cos(angle) * circle.getRadius();//基于画布的坐标 从圆周上的点
-        let y = Math.sin(angle) * circle.getRadius();
         var arrowLine = new Konva.Arrow({
             x: circle.getX(),//圆 心
             y: circle.getY(),//圆 心
@@ -526,16 +523,42 @@
                 let rate = 0.2;
                 let arrowLine = stage.find('#arrowLine_' + index)[0];
                 let points = arrowLine.getPoints();
+                let startPointer = {
+                    x: points[0],
+                    y: points[1]
+                }
                 let endPointer = {
-                    x: points[2] * (1 - rate), //需要拉近 坐标变小
-                    y: points[3] * (1 - rate)
+                    x: points[2],
+                    y: points[3]
+                }
+                let slope = (endPointer.y - startPointer.y) / (endPointer.x - startPointer.x); //斜率
+                endPointer = {
+                    x: points[2] * (1 + rate), //需要拉近 坐标变小
+                    y: points[3] * (1 + rate)
+                }
+                if (Math.abs(endPointer.x) >= rootWidth / 2 - imgSize / 2) {
+                    if (endPointer.x < 0) {
+                        endPointer.x += Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
+                    } else {
+                        endPointer.x -= Math.abs(endPointer.x) - (rootWidth / 2 - imgSize / 2);
+                    }
+                    endPointer.y = slope * endPointer.x;
+
+                }
+                if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize) {
+                    if (endPointer.y < 0) {
+                        endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 20);
+                    } else {
+                        endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 20);
+                    }
+                    endPointer.x = endPointer.y / slope;
                 }
                 var tweenArrowLine = new Konva.Tween({
                     node: arrowLine,
                     duration: 1,
                     opacity: 1,
                     stroke: '#EE8000',
-                    points: [points[0], points[1], endPointer.x, endPointer.y],
+                    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
                     onFinish: function () {
                         // remove all references from Konva
                         tweenArrowLine.destroy();

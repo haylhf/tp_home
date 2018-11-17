@@ -27,7 +27,7 @@
     var layer = null;
     var dateLayer = null;
     var circle = null;
-    var userImgSize = 100;
+    var userImgSize = 90;
     var vipsignList = [];
     const MaxCount = 10;
 
@@ -259,12 +259,12 @@
      */
     function generateEndPointer(index, startPointer) {
         let angle = 360 / MaxCount * index;
-        let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2);//这里可以位置的调整取值范围
-        let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - userImgSize / 2 - 100, angle);// 外圏结束点，角度不变，仅长度变长。需要考虑右边还有VIP及名字的显示+100
+        let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2) - userImgSize;//这里可以位置的调整取值范围
+        let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength * 0.5 - 100, angle);// 外圏结束点，角度不变，仅长度变长。需要考虑右边还有VIP及名字的显示+100
 
         if (index % 5 == 0) {
-            arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2);
-            endPointer = getPointByAngle({x: 0, y: 0}, arrowLength - userImgSize / 2 - 20, angle); //内圏
+            arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2) - userImgSize;
+            endPointer = getPointByAngle({x: 0, y: 0}, arrowLength * 0.5, angle); //内圏
         }
 
 
@@ -292,12 +292,9 @@
     function addDepartmentToUI(item) {
         let index = item.index;
         let angle = 360 / MaxCount * index;// 算出每一个对象所要显示在圆周上的角度
-        let startPointer = getPointByAngle({x: 0, y: 0}, 200 / 2, angle); //线起始点，随着角度变化
+        let startPointer = getPointByAngle({x: 0, y: 0}, 200 / 2, angle); //线起始点，随着角度变化 200/2为外圈的半径
         var endPointer = generateEndPointer(index, startPointer);
 
-        //circle.attrs
-        let x = Math.cos(angle) * circle.getRadius();//基于画布的坐标 从圆周上的点
-        let y = Math.sin(angle) * circle.getRadius();
         var arrowLine = new Konva.Arrow({
             x: circle.getX(),//圆 心
             y: circle.getY(),//圆 心
@@ -343,7 +340,7 @@
         imageObj.src = photoURL + item.photo;
 
         var signedUser = new Konva.Text({
-            x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
+            x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 70,
             y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
             text: item.name,//TODO
             fontSize: 16,
@@ -357,7 +354,7 @@
         vipImage.onload = function () {
             let img = new Konva.Image({
                 image: vipImage,
-                x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
+                x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 70,
                 y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
                 width: 35,
                 height: 18,
@@ -531,19 +528,47 @@
                     console.log(`playZoominAnimation index:${index}`)
 
                     let index = item.index;
-                    let rate = 0.2;
+                    let rate = 0.4;
                     let arrowLine = stage.find('#arrowLine_' + index)[0];
                     let points = arrowLine.getPoints();
+                    let startPointer = {
+                        x: points[0],
+                        y: points[1]
+                    }
                     let endPointer = {
-                        x: points[2] * (1 - rate), //需要拉近 坐标变小
-                        y: points[3] * (1 - rate)
+                        x: points[2],
+                        y: points[3]
+                    }
+                    let slope = (endPointer.y - startPointer.y) / (endPointer.x - startPointer.x); //斜率
+
+                    endPointer = {
+                        x: points[2] * (1 + rate * 3), //需要拉近 坐标变小
+                        y: points[3] * (1 + rate * 3)
+                    }
+
+                    if (Math.abs(endPointer.x) >= rootWidth / 2 - userImgSize / 2) {
+                        if (endPointer.x < 0) {
+                            endPointer.x += Math.abs(endPointer.x) - (rootWidth / 2 - userImgSize / 2);
+                        } else {
+                            endPointer.x -= Math.abs(endPointer.x) - (rootWidth / 2 - userImgSize / 2);
+                        }
+                        endPointer.y = slope * endPointer.x;
+
+                    }
+                    if (Math.abs(endPointer.y) >= rootHeight / 2 - userImgSize - 10) {
+                        if (endPointer.y < 0) {
+                            endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize - 10);
+                        } else {
+                            endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize - 10);
+                        }
+                        endPointer.x = endPointer.y / slope;
                     }
                     var tweenArrowLine = new Konva.Tween({
                         node: arrowLine,
                         duration: 0.8,
                         opacity: 1,
                         stroke: '#EE8000',
-                        points: [points[0], points[1], endPointer.x, endPointer.y],
+                        points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
                         onFinish: function () {
                             // remove all references from Konva
                             tweenArrowLine.destroy();
@@ -559,8 +584,8 @@
                         opacity: 1,
                         x: circle.getX() + circlePointer.x,
                         y: circle.getY() + circlePointer.y,
-                        scaleX: userCircle.getAbsoluteScale().x * (1 + rate),
-                        scaleY: userCircle.getAbsoluteScale().y * (1 + rate),
+                        scaleX: userCircle.getAbsoluteScale().x * (1 + rate - 0.2),
+                        scaleY: userCircle.getAbsoluteScale().y * (1 + rate - 0.2),
                         fillPatternScale: {
                             x: 1,
                             y: 1,
@@ -578,7 +603,7 @@
                         opacity: 1,
                         scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
                         scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
-                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
+                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 80,
                         y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
                         onFinish: function () {
                             // remove all references from Konva
@@ -593,7 +618,7 @@
                         opacity: 1,
                         scaleX: vipImage.getAbsoluteScale().x * (1 + rate),
                         scaleY: vipImage.getAbsoluteScale().y * (1 + rate),
-                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 90,
+                        x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 80,
                         y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
                         onFinish: function () {
                             // remove all references from Konva
