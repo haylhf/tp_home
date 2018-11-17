@@ -33,10 +33,11 @@
 
     $(document).ready(function () {
         loadData();
+        window.onresize = function () {
+            console.log("onresize")
+            loadData();
+        }
     })
-    window.onresize = function () {
-        loadData();
-    }
 
     function drawCurrentDayImage(currentDay) {
 //添加中心圆-当前具体日期-天
