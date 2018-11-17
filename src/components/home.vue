@@ -219,32 +219,32 @@
 					 }
 				 }
 
-//			    $.ajax({
-//				    url: HOST + "user/getStaffNum",
-//				    type: 'GET',
-//				    dataType: 'json',
-//				    success: function (data) {
-//					    if (data.code == 200) {
-//						    _this.staffNum = data.data;
-//					    }
-//				    },
-//				    error: function (data) {
-//
-//				    }
-//			    })
-//			    $.ajax({
-//				    url: HOST + "user/getStaffSignInNum",
-//				    type: 'GET',
-//				    dataType: 'json',
-//				    success: function (data) {
-//					    if (data.code == 200) {
-//						    _this.signInNum = data.data;
-//					    }
-//				    },
-//				    error: function (data) {
-//
-//				    }
-//			    })
+			    $.ajax({
+				    url: HOST + "user/getStaffNum",
+				    type: 'GET',
+				    dataType: 'json',
+				    success: function (data) {
+					    if (data.code == 200) {
+						    _this.staffNum = data.data;
+					    }
+				    },
+				    error: function (data) {
+
+				    }
+			    })
+			    $.ajax({
+				    url: HOST + "user/getStaffSignInNum",
+				    type: 'GET',
+				    dataType: 'json',
+				    success: function (data) {
+					    if (data.code == 200) {
+						    _this.signInNum = data.data;
+					    }
+				    },
+				    error: function (data) {
+
+				    }
+			    })
 
 			 }, 1000);//定时器
 

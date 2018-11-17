@@ -738,7 +738,7 @@
 				    if (departmentList[i].updateTime) {
 					    let dtime = new Date() - departmentList[i].updateTime;  // 计算时间差
 					    let diffTimes = Math.floor(dtime / 1000); //算出总的分钟数差值
-					    if (diffTimes >= 30) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
+					    if (diffTimes >= 20) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
 						    if (departmentList[i].isZoomIn && departmentList[i].isZoomIn == true) {
 							    _this.playAnimationToReset(i);
 						    }
