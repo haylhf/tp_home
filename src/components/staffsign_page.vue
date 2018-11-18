@@ -210,6 +210,9 @@
              *  根据部门对象列表循环添加到UI图层上
              * */
             for (let i = 0; i < departmentList.length; i++) {
+                if (departmentList[i].tagId == "") {
+                    continue;
+                }
                 addDepartmentToUI(departmentList[i], i);
             }
         } catch (e) {
@@ -241,8 +244,11 @@
         let angle = 360 / departmentList.length * index;
         let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2) - imgSize / 2;//这里可以位置的调整取值范围
 
-        if (index % 2 == 0) {
-            arrowLength = getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2) - imgSize / 2;
+        if (departmentList[index].isInnerSide && departmentList[index].isInnerSide == true) {
+            arrowLength = rootHeight / 2 - circle.getRadius() - imgSize / 2; //getRandomInt(rootHeight / 2 - circle.getRadius(), rootHeight / 2) - imgSize / 2;
+        }
+        if (index == 4 || index == 8 || index == 16 || index == 20) {
+            arrowLength += 55;
         }
 
         let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength * 0.7, angle);// 结束点，角度不变，仅长度变长。
@@ -315,10 +321,10 @@
         bgImage.src = require('../assets/img/signed_block.png');
 
         var signedUser = new Konva.Text({
-            x: circle.getX() + endPointer.x - imgSize / 2 + 12,
-            y: circle.getY() + endPointer.y - imgSize / 2 + 15,
-            text: item.currentNum == 0 ? "0" : item.currentNum.toString(),
-            fontSize: 18,
+            x: circle.getX() + endPointer.x - imgSize / 2 + 8,
+            y: circle.getY() + endPointer.y - imgSize / 2 + 12,
+            text: item.currentNum.toString(),
+            fontSize: 20,
             opacity: 0.5,
             fontFamily: 'Calibri',
             // fill: 'black',
@@ -328,11 +334,11 @@
             name: `signedUser_${item.name}`,
         });
         var totalUser = new Konva.Text({
-            x: circle.getX() + endPointer.x + 5,
-            y: circle.getY() + endPointer.y + 3,
-            text: item.totalNum == 0 ? "0" : item.totalNum.toString(),
+            x: circle.getX() + endPointer.x + 8,
+            y: circle.getY() + endPointer.y + 6,
+            text: item.totalNum.toString(),
             opacity: 0.5,
-            fontSize: 18,
+            fontSize: 12,
             fontStyle: 'bold',
             fontFamily: 'Calibri',
             fill: 'white',
@@ -342,20 +348,24 @@
         });
 
         var imgDepart = new Image();//Html Image
+        let offset = 60;
+        if (item.text.length < 5) {
+            offset = 61;
+        }
         imgDepart.onload = function () {
             let departimg = new Konva.Image({
                 image: imgDepart,
-                x: circle.getX() + endPointer.x - imgSize / 2,
-                y: circle.getY() + endPointer.y + imgSize / 2 + 5,//在上个图下方显示部门图片
+                x: circle.getX() + endPointer.x - imgSize / 2 - offset,
+                y: circle.getY() + endPointer.y + imgSize / 2,//在上个图下方显示部门图片
                 opacity: 0.5,
                 scale: {
-                    x: 0.35,
-                    y: 0.35
+                    x: 0.4,
+                    y: 0.48
                 }
             });
-            if (departimg.getX() + departimg.getWidth() >= rootWidth) {
-                departimg.offsetX((departimg.getX() + departimg.getWidth() - rootWidth));
-            }
+            // if (departimg.getX() + departimg.getWidth() >= rootWidth) {
+            //     departimg.offsetX((departimg.getX() + departimg.getWidth() - rootWidth));
+            // }
             departimg.setName(`imgDepart_${item.name}`);
             departimg.setId(`imgDepart_${index}`);
             departimg.setHeight(40)
@@ -411,7 +421,9 @@
         },
         methods: {
             reloadData() {
-                loadData();
+                // setTimeout(() => {
+                //     loadData()
+                // }, 1000)
             },
             updatePercentNum(num) {
                 let fs = 50;
@@ -441,6 +453,25 @@
                 dateLayer.add(percentNumber);
                 stage.draw();
             },
+
+            pullLatestData(dataList) {
+                let updateList = [];
+                for (let item of dataList) {
+                    for (let i = 0; i < departmentList.length; i++) {
+                        if (departmentList[i].tagId != "" && departmentList[i].tagId == item.tagId) {
+                            if (departmentList[i].currentNum != item.currentNum
+                                || departmentList[i].totalNum != item.totalNum) {
+                                updateList.push(item);//new data
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (updateList.length > 0) {
+                    _this.updateData(updateList);
+                }
+
+            },
             updateData(dataList) {
                 if (!dataList || dataList.length == 0) {
                     return;
@@ -455,7 +486,6 @@
                     });
                     break;
                 }
-
             },
 
             updateDataToUI(data, dataList, callback) {
@@ -464,6 +494,9 @@
                     for (let i = 0; i < departmentList.length; i++) {
                         if ((departmentList[i].tagId && departmentList[i].tagId == data.tagId)) {
                             departmentList[i] = Object.assign(departmentList[i], data);
+                            if (departmentList[i].tagId == "") {
+                                return;
+                            }
                             _this.playZoominAnimation(i, departmentList[i]);
                             break;
                         }
@@ -515,12 +548,14 @@
 
                 let signedUser = stage.find('#signedUser_' + index)[0];
                 if (signedUser) {
-                    signedUser.setText(signedData.currentNum.toString()); //更新相应部门刷卡人数
+                    let text = signedData.currentNum.toString()
+                    signedUser.setText(text); //更新相应部门刷卡人数
                 }
 
                 let totalUser = stage.find('#totalUser_' + index)[0];
                 if (totalUser) {
-                    totalUser.setText(signedData.totalNum.toString()); //更新相应部门总人数
+                    let text = signedData.totalNum.toString()
+                    totalUser.setText(text); //更新相应部门总人数
                 }
 
                 if (departmentList[index].isZoomIn && departmentList[index].isZoomIn == true) {
@@ -615,7 +650,7 @@
                     opacity: 1,
                     scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
                     scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x + 20,
+                    x: circle.getX() + endPointer.x + 24,
                     y: circle.getY() + endPointer.y + 20,
                     onFinish: function () {
                         // remove all references from Konva
@@ -630,7 +665,7 @@
                     opacity: 1,
                     scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
                     scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x - imgSize / 2,
+                    x: circle.getX() + endPointer.x - imgSize / 2 - 75,
                     y: circle.getY() + endPointer.y + imgSize / 2 + 25,
                     onFinish: function () {
                         // remove all references from Konva
@@ -721,7 +756,7 @@
                     opacity: 0.5,
                     scaleX: 1,
                     scaleY: 1,
-                    x: circle.getX() + endPointer.x - imgSize / 2 + 12,
+                    x: circle.getX() + endPointer.x - imgSize / 2 + 6,
                     y: circle.getY() + endPointer.y - imgSize / 2 + 15,
                     onFinish: function () {
                         // remove all references from Konva
@@ -736,7 +771,7 @@
                     opacity: 0.5,
                     scaleX: 1,
                     scaleY: 1,
-                    x: circle.getX() + endPointer.x + 5,
+                    x: circle.getX() + endPointer.x + 8,
                     y: circle.getY() + endPointer.y + 3,
                     onFinish: function () {
                         // remove all references from Konva
@@ -749,10 +784,10 @@
                     node: imgDepart,
                     duration: 1,
                     opacity: 0.5,
-                    scaleX: 0.35,
-                    scaleY: 0.35,
-                    x: circle.getX() + endPointer.x - imgSize / 2,
-                    y: circle.getY() + endPointer.y + imgSize / 2,
+                    scaleX: 0.4,
+                    scaleY: 0.48,
+                    x: circle.getX() + endPointer.x - imgSize / 2 - 55,
+                    y: circle.getY() + endPointer.y + imgSize / 2 + 5,
                     onFinish: function () {
                         // remove all references from Konva
                         tweenImgDepart.destroy();
@@ -785,6 +820,9 @@
                                 if (res.data && res.data.length > 0) {
                                     for (let item of res.data) {//填充数据
                                         for (let i = 0; i < departmentList.length; i++) {
+                                            if (departmentList[i].tagId == "") {
+                                                continue;
+                                            }
                                             if (item.tagId == departmentList[i].tagId) {
                                                 departmentList[i] = Object.assign(item, departmentList[i]);
                                                 break;

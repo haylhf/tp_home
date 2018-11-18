@@ -4,19 +4,22 @@
         <!--style="width: 100%;height: 100%;position: absolute;z-index: -100; background-position: center;"/>-->
         <div class="homeDiv">
             <el-row>
-                <span style="font-size: 20px;">签到：</span>
-                <span style="font-size: 20px;">{{getSignIn()}}</span>
+                <span>员工状态&nbsp;</span>
+                <span>{{getSignIn()}}</span>
             </el-row>
 
-            <el-row style="margin-top: 5px">
+            <el-row style="margin-top: 5px;">
                 <span>{{currentTime}}</span>
             </el-row>
         </div>
 
         <VipSignPage ref="vipPage" v-show="isShowVIP"></VipSignPage>
         <StaffSignPage ref="staffPage" v-show="!isShowVIP"></StaffSignPage>
+        <div v-show="isShowLogo" style="background-image: url('../assets/img/bottomBg.png');width: 100%;height: 100%;">
+            <img class="col-md-12 el-col-md-offset-7" src="../assets/img/logo.png"
+                 style="margin-top: 20px; width: 500px;height: 56px;"/>
 
-
+        </div>
     </div>
 
 </template>
@@ -29,21 +32,29 @@
 
         document.onclick = () => {
             if (checkFull()) {
+                _this.isShowLogo = true;
                 return;
             }
             requestFullScreen();
-            setTimeout(() => {
-                if (_this.$refs.staffPage) {
-                    _this.$refs.staffPage.reloadData();
-                }
-                if (_this.$refs.vipPage) {
-                    _this.$refs.vipPage.reloadData();
-                }
-            }, 300)
+            // setTimeout(() => {
+            //     if (_this.isShowVIP) {
+            //         if (_this.$refs.vipPage) {
+            //             _this.$refs.vipPage.reloadData();
+            //         }
+            //     }
+            //     else {
+            //         if (_this.$refs.staffPage) {
+            //             _this.$refs.staffPage.reloadData();
+            //         }
+            //     }
+            // }, 300)
         };
     });
     $(window).resize(function () {
-        // _this.bgImg = require('../assets/img/main.png');
+        _this.isShowLogo = false;
+        if (checkFull()) {
+            _this.isShowLogo = true;
+        }
     });
     // var hostname = MqttServer,
     //     port = ServerPort,
@@ -142,7 +153,7 @@
 
     function onVisitorSign(signDataList) {
         if (_this.$refs.staffPage && signDataList.length > 0) {
-            _this.$refs.staffPage.updateData(signDataList);
+            _this.$refs.staffPage.pullLatestData(signDataList);
             let percent = 0;
             if (_this.staffNum != 0) {
                 percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
@@ -176,6 +187,7 @@
                 bgImg: require('../assets/img/main.png'),
                 currentDate: '',
                 serverInterval: 0,
+                isShowLogo: false,
             }
         },
         methods: {
@@ -223,7 +235,7 @@
                     })
 
                     $.ajax({
-                        url: HOST + "user/getSendingSignInList",
+                        url: HOST + "user/getSignInOutList",
                         type: 'GET',
                         dataType: 'json',
                         withCredentials: false,               // allow CORS
@@ -360,15 +372,17 @@
 <style>
     span {
         text-align: center;
-        font-size: 20px;
+        font-family: "Microsoft YaHei UI";
+        font-size: 16px;
+        opacity: 0.7;
         color: white;
     }
 
     .homeDiv {
         right: 0;
         text-align: right;
-        margin-top: 20px;
-        margin-right: 20px;
+        margin-top: 30px;
+        margin-right: 30px;
         position: absolute;
         z-index: 0;
     }
