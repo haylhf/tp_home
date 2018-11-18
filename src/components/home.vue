@@ -13,8 +13,8 @@
             </el-row>
         </div>
 
-        <VipSignPage ref="vipPage" v-show="isShowVIP"></VipSignPage>
-        <StaffSignPage ref="staffPage" v-show="!isShowVIP"></StaffSignPage>
+        <!--<VipSignPage ref="vipPage" v-show="isShowVIP"></VipSignPage>-->
+        <StaffSignPage ref="staffPage" ></StaffSignPage>
         <div v-show="isShowLogo" style="background-image: url('../assets/img/bottomBg.png');width: 100%;height: 100%;">
             <img class="col-md-12 el-col-md-offset-7" src="../assets/img/logo.png"
                  style="margin-top: 20px; width: 500px;height: 56px;"/>
@@ -221,8 +221,8 @@
                             if (res.code == 200) {
                                 try {
                                     if (res.data && res.data.length > 0) {
-                                        _this.isShowVIP = true;
-                                        onShowVipUI(res.data);
+                                        //_this.isShowVIP = true;
+                                        //onShowVipUI(res.data);
                                     }
                                 }
                                 catch (e) {

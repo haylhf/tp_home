@@ -853,22 +853,55 @@
         filters: {},
         created: function () {
             console.log('created')
-            // setInterval(() => {
-            //     let num = getRandomInt(0, departmentList.length - 2)//Test TODO
-            //
-            //     _this.updateData([
-            //         {
-            //             tagId: departmentList[num].tagId,
-            //             totalNum: 50,
-            //             currentNum: 30,
-            //         },
-            //         {
-            //             tagId: departmentList[num + 1].tagId,
-            //             totalNum: 50,
-            //             currentNum: 20,
-            //         }
-            //     ])
-            // }, 1000)
+            setInterval(() => {
+
+                $.ajax({
+                    url: HOST + "user/getMovingList",
+                    type: 'GET',
+                    dataType: 'json',
+                    withCredentials: false,               // allow CORS
+                    headers: {
+                        "Access-Control-Allow-Headers": "*"
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            try {
+                                if (res.data && res.data.length > 0) {
+                                    for (let item of res.data) {
+                                        for (let i = 0; i < departmentList.length; i++) {
+                                            if (departmentList[i].tagId == "") {
+                                                continue;
+                                            }
+                                            if (departmentList[i].tagId == item) {
+                                                if (!departmentList[i].isZoomIn || departmentList[i].isZoomIn == false) {
+                                                    _this.playZoominAnimation(i, departmentList[i]);// play animation
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    },
+                })
+                //let num = getRandomInt(0, departmentList.length - 2)//Test TODO
+                // _this.updateData([
+                //     {
+                //         tagId: departmentList[num].tagId,
+                //         totalNum: 50,
+                //         currentNum: 30,
+                //     },
+                //     {
+                //         tagId: departmentList[num + 1].tagId,
+                //         totalNum: 50,
+                //         currentNum: 20,
+                //     }
+                // ])
+            }, 5 * 1000)
         },
         mounted: function () {
             console.log('mounted')
@@ -877,7 +910,7 @@
                     if (departmentList[i].updateTime) {
                         let dtime = new Date() - departmentList[i].updateTime;  // 计算时间差
                         let diffTimes = Math.floor(dtime / 1000); //算出总的分钟数差值
-                        if (diffTimes >= 20) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
+                        if (diffTimes >= 5) {//1 分钟内没有人刷卡，则部门变小回退到原来位置
                             if (departmentList[i].isZoomIn && departmentList[i].isZoomIn == true) {
                                 _this.playAnimationToReset(i);
                             }
@@ -886,7 +919,7 @@
                 }
 
 
-            }, 10 * 1000);//定时器每1分钟检查一次
+            }, 4 * 1000);//定时器每1分钟检查一次
         },
         destroyed: function () {
             window.clearInterval(currentInterval);
