@@ -33,11 +33,10 @@
 
     $(document).ready(function () {
         loadData();
-        window.onresize = function () {
-            console.log("onresize")
-            loadData();
-        }
     })
+    $(window).resize(function(){
+        console.log("onresize")
+    });
 
     function drawCurrentDayImage(currentDay) {
 //添加中心圆-当前具体日期-天
@@ -419,6 +418,9 @@
             }
         },
         methods: {
+            reloadData() {
+                loadData();
+            },
             updateData(dataList) {
                 _this.isLoading = true;
                 if (!dataList || dataList.length == 0) {
@@ -667,7 +669,7 @@
                     group.remove();
                 }
                 stage.draw();
-            }
+            },
         },
 
         computed: {},

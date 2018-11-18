@@ -11,12 +11,10 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "echarts": "^3.8.5",
-    "element-ui": "^2.0.7",
-    "konva": "^2.5.0",
-    "node-sass": "^4.7.2",
-    "vue": "^2.5.2",
-    "vue-konva": "^1.0.7",
-    "vue-multiselect": "^2.0.0-beta.13",
+    "element-ui": "^2.3.6",
+    "node-sass": "^4.9.0",
+    "vue": "^2.5.16",
+    "vue-multiselect": "^2.1.0",
     "vue-qart": "^2.1.1",
     "vue-quill-editor": "^2.3.3",
     "vue-router": "^3.0.1",
@@ -25,7 +23,7 @@
   },
   "devDependencies": {
     "axios": "^0.17.0",
-    "babel-core": "^6.0.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^6.0.0",
     "babel-preset-env": "^1.6.0",
     "cross-env": "^3.0.0",
@@ -35,8 +33,8 @@
     "sass-loader": "^5.0.1",
     "style-loader": "^0.13.2",
     "vue-loader": "^12.1.0",
-    "vue-template-compiler": "^2.3.3",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "webpack-dev-server": "^2.11.2"
   }
 }

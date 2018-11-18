@@ -1,7 +1,7 @@
 <template xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <div>
-        <img :src="bgImg"
-             style="width: 100%;height: 100%;position: absolute;z-index: -100; background-position: center;"/>
+        <!--<img v-bind:src="bgImg"-->
+        <!--style="width: 100%;height: 100%;position: absolute;z-index: -100; background-position: center;"/>-->
         <div class="homeDiv">
             <el-row>
                 <span style="font-size: 20px;">签到：</span>
@@ -13,8 +13,8 @@
             </el-row>
         </div>
 
-        <VipSignPage ref="vipPage" v-if="isShowVIP"></VipSignPage>
-        <StaffSignPage ref="staffPage" v-else></StaffSignPage>
+        <VipSignPage ref="vipPage" v-show="isShowVIP"></VipSignPage>
+        <StaffSignPage ref="staffPage" v-show="!isShowVIP"></StaffSignPage>
 
 
     </div>
@@ -23,46 +23,58 @@
 
 <script>
     $(document).ready(function () {
-        client.connect(options);//连接服务器并注册连接成功处理事件
-        client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
-        client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
-        window.onclick = () => {
+        // client.connect(options);//连接服务器并注册连接成功处理事件
+        // client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
+        // client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
+
+        document.onclick = () => {
+            if (checkFull()) {
+                return;
+            }
             requestFullScreen();
+            setTimeout(() => {
+                if (_this.$refs.staffPage) {
+                    _this.$refs.staffPage.reloadData();
+                }
+                if (_this.$refs.vipPage) {
+                    _this.$refs.vipPage.reloadData();
+                }
+            }, 300)
         };
-        window.resize = () => {
-            _this.bgImg = require('../assets/img/main.png');
-        };
-    })
-    var hostname = MqttServer,
-        port = ServerPort,
-        clientId = `client-${newGuid()}`,
-        timeout = 5,
-        keepAlive = 100,
-        cleanSession = false,
-        ssl = false,
-        userName = 'admin',
-        password = 'password',
-        sendTopic = "sign_feedback";
-    var client = new Paho.MQTT.Client(hostname, port, clientId);
-    //建立客户端实例
-    var options = {
-        invocationContext: {
-            host: hostname,
-            port: port,
-            path: client.path,
-            clientId: clientId
-        },
-        timeout: timeout,
-        keepAliveInterval: keepAlive,
-        cleanSession: cleanSession,
-        useSSL: ssl,
-        userName: userName,
-        password: password,
-        onSuccess: onConnect,
-        onFailure: function (e) {
-            console.log(`connect failure: ${e}`);
-        },
-    };
+    });
+    $(window).resize(function () {
+        // _this.bgImg = require('../assets/img/main.png');
+    });
+    // var hostname = MqttServer,
+    //     port = ServerPort,
+    //     clientId = `client-${newGuid()}`,
+    //     timeout = 5,
+    //     keepAlive = 100,
+    //     cleanSession = false,
+    //     ssl = false,
+    //     userName = 'admin',
+    //     password = 'password',
+    //     sendTopic = "sign_feedback";
+    // var client = new Paho.MQTT.Client(hostname, port, clientId);
+    // //建立客户端实例
+    // var options = {
+    //     invocationContext: {
+    //         host: hostname,
+    //         port: port,
+    //         path: client.path,
+    //         clientId: clientId
+    //     },
+    //     timeout: timeout,
+    //     keepAliveInterval: keepAlive,
+    //     cleanSession: cleanSession,
+    //     useSSL: ssl,
+    //     userName: userName,
+    //     password: password,
+    //     onSuccess: onConnect,
+    //     onFailure: function (e) {
+    //         console.log(`connect failure: ${e}`);
+    //     },
+    // };
 
     function onConnect() {
         console.log("connect successfully");
@@ -72,20 +84,6 @@
             client.subscribe(item);
         }
     }
-
-    var isActived = true;
-    window.ondeactivate = () => {
-        isActived = false;
-    };
-    window.onactivate = () => {
-        isActived = true;
-    };
-    window.onblur = () => {
-        isActived = false;
-    };
-    window.onfocus = () => {
-        isActived = true;
-    };
 
     function onConnectionLost(responseObject) {
         if (responseObject.errorCode !== 0) {
@@ -155,6 +153,8 @@
 
     var _this;
     var currentInterval;
+    const api = new API();
+    import API from '../api/API'
     import Vue from 'vue';
     import StaffSignPage from '../components/staffsign_page.vue';
     import VipSignPage from '../components/vipsign_page.vue';
@@ -175,6 +175,7 @@
                 isShowVIP: false,
                 bgImg: require('../assets/img/main.png'),
                 currentDate: '',
+                serverInterval: 0,
             }
         },
         methods: {
@@ -190,7 +191,130 @@
             },
             getSignIn() {
                 return _this.signInNum + " / " + _this.staffNum;
+            },
+
+            getDataFromServer() {
+                _this.serverInterval = window.setInterval(() => {
+                    _this.currentTime = new Date().format("MM月dd日 hh:mm");
+
+                    $.ajax({
+                        url: HOST + "user/getSendingVipList",
+                        type: 'GET',
+                        dataType: 'json',
+                        withCredentials: false,               // allow CORS
+                        headers: {
+                            "Access-Control-Allow-Headers": "*"
+                        },
+                        success: function (res) {
+                            if (res.code == 200) {
+                                try {
+                                    if (res.data && res.data.length > 0) {
+                                        _this.isShowVIP = true;
+                                        onShowVipUI(res.data);
+                                    }
+                                }
+                                catch (e) {
+                                    console.log(e);
+                                }
+                            }
+                        },
+                        error: function (res) {
+                        }
+                    })
+
+                    $.ajax({
+                        url: HOST + "user/getSendingSignInList",
+                        type: 'GET',
+                        dataType: 'json',
+                        withCredentials: false,               // allow CORS
+                        headers: {
+                            "Access-Control-Allow-Headers": "*"
+                        },
+                        success: function (res) {
+                            if (res.code == 200) {
+                                try {
+                                    if (res.data && res.data.length > 0) {
+                                        _this.isShowVIP = false;
+                                        onVisitorSign(res.data);
+                                    }
+                                }
+                                catch (e) {
+                                    console.log(e);
+                                }
+                            }
+                        },
+                    })
+
+                    $.ajax({
+                        url: HOST + "user/getStaffNum",
+                        type: 'GET',
+                        dataType: 'json',
+                        withCredentials: false,               // allow CORS
+                        headers: {
+                            "Access-Control-Allow-Headers": "*"
+                        },
+                        success: function (data) {
+                            if (data.code == 200) {
+                                _this.staffNum = data.data;
+                                let percent = 0;
+                                if (_this.staffNum != 0) {
+                                    percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
+                                }
+                                if (_this.$refs.staffPage) {
+                                    _this.$refs.staffPage.updatePercentNum(percent);
+                                }
+                            }
+                        },
+                    })
+                    $.ajax({
+                        url: HOST + "user/getStaffSignInNum",
+                        type: 'GET',
+                        dataType: 'json',
+                        withCredentials: false,               // allow CORS
+                        headers: {
+                            "Access-Control-Allow-Headers": "*"
+                        },
+                        success: function (data) {
+                            if (data.code == 200) {
+                                _this.signInNum = data.data;
+                                let percent = 0;
+                                if (_this.staffNum != 0) {
+                                    percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
+                                }
+                                if (_this.$refs.staffPage) {
+                                    _this.$refs.staffPage.updatePercentNum(percent);
+                                }
+                            }
+                        },
+                    })
+
+                    // var params = {
+                    //     api: HOST + "user/getStaffSignInNum",
+                    // };
+                    // api.get(params)
+                    //     .then(function (res) {
+                    //         // alert('success')
+                    //         if (res.code == 200) {
+                    //             _this.signInNum = res.data;
+                    //             let percent = 0;
+                    //             if (_this.staffNum != 0) {
+                    //                 percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
+                    //             }
+                    //             if(_this.$refs.staffPage)
+                    //             {
+                    //                 _this.$refs.staffPage.updatePercentNum(percent);
+                    //             }
+                    //         }
+                    //     })
+                    //     .catch(function (error) {
+                    //         console.log(error);
+                    //         api.reqFail(_this, "服务器访问出错" + error);
+                    //     })
+
+                }, 800);
             }
+
+
         },
         computed: {},
         filters: {},
@@ -199,7 +323,6 @@
         },
         mounted: function () {
             currentInterval = setInterval(function updateTime() {
-                _this.currentTime = new Date().format("MM月dd日 hh:mm");
                 let d = new Date();
                 if (d.getHours() == 0 && d.getMinutes() == 0 && d.getSeconds() == 0) //当时间为00:00时，背景日期图片计算并更新
                 {
@@ -222,38 +345,14 @@
                     }
                 }
 
-                $.ajax({
-                    url: HOST + "user/getStaffNum",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.code == 200) {
-                            _this.staffNum = data.data;
-                        }
-                    },
-                    error: function (data) {
+            }, 60 * 1000);//定时器
 
-                    }
-                })
-                $.ajax({
-                    url: HOST + "user/getStaffSignInNum",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.code == 200) {
-                            _this.signInNum = data.data;
-                        }
-                    },
-                    error: function (data) {
-
-                    }
-                })
-
-            }, 1000);//定时器
+            _this.getDataFromServer();
 
         },
         destroyed: function () {
             clearInterval(currentInterval);
+            clearInterval(_this.serverInterval);
         }
     }
 

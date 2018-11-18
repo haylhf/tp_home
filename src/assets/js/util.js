@@ -441,6 +441,13 @@ function isIE() {
 	}
 }
 
+function checkFull() {
+    var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
+    //to fix : false || undefined == undefined
+    if (isFull === undefined) { isFull = false; }
+    return isFull;
+}
+
 function requestFullScreen() {
 	var doc = document.documentElement;
 	var i = 0;

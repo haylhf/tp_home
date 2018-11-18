@@ -17,13 +17,8 @@
     var departmentList = DEPARTMENT_LIST;
 
     $(document).ready(function () {
-        loadData();
-        window.onresize = function () {
-            console.log("onresize")
-            loadData();
-        }
+        _this.getInitData();
     })
-
 
     function drawCurrentDayImage(currentDay) {
 //添加中心圆-当前具体日期-天
@@ -38,7 +33,10 @@
             });
             dimg.setName(`currentDayImage`);
             dimg.setId(`currentDayImage`);
-            dateLayer.add(dimg);
+            setTimeout(() => {
+                dateLayer.add(dimg);
+                stage.draw();
+            }, 200)
         };
         let currentDayImageName = `circle_date_${currentDay}.png`;
         if (currentDay.toString().length == 1) {
@@ -60,6 +58,7 @@
             });
             dimg.setName(`dayImage`);
             dimg.setId(`dayImage`);
+
             dateLayer.add(dimg);
         };
         let dayImageName = `circle_date_all_${alldays}.png`;
@@ -80,7 +79,11 @@
                 });//Konva Image
             mimg.setName(`currentMonthImage`);
             mimg.setId(`currentMonthImage`);
-            dateLayer.add(mimg);
+            setTimeout(() => {
+                dateLayer.add(mimg);
+                stage.draw();
+            }, 200)
+
         };
         let currentMonthImageName = `circl_month_${currentMonth}.png`;
         if (currentMonth.toString().length == 1) {
@@ -152,80 +155,82 @@
     }
 
     function loadData() {
+        try {
+            if (layer && layer != null) {
+                layer.clear();
+            }
 
-        if (layer && layer != null) {
-            layer.clear();
+            if (dateLayer && dateLayer != null) {
+                dateLayer.clear();
+            }
+
+            if (stage && stage != null) {
+                stage.clear();
+            }
+
+            rootWidth = window.innerWidth;
+            rootHeight = window.innerHeight;
+            stage = new Konva.Stage({
+                container: 'container',
+                width: rootWidth,
+                height: rootHeight,
+            });
+            layer = new Konva.Layer();
+            dateLayer = new Konva.Layer();
+            let r = 60
+            circle = new Konva.Circle({
+                x: stage.getWidth() / 2,
+                y: stage.getHeight() / 2,
+                radius: r, //半径
+                fill: '',
+                stroke: 'white',
+                strokeWidth: 2
+            });
+            dateLayer.add(circle);
+
+            circle.hide();
+
+            drawCircleImage();
+
+            drawAllMonthImage();
+
+            let date = new Date();
+            let currentMonth = date.getMonth() + 1;//从 Date 对象返回月份 (0 ~ 11)
+            let currentDay = date.getDate();
+            let alldays = getDaysByMonth(date.getYear(), currentMonth);
+
+            drawCurrentMonthImage(currentMonth);
+
+            drawAllDaysImage(alldays);
+
+            drawCurrentDayImage(currentDay);
+
+
+            /*
+             *  根据部门对象列表循环添加到UI图层上
+             * */
+            for (let i = 0; i < departmentList.length; i++) {
+                addDepartmentToUI(departmentList[i], i);
+            }
+        } catch (e) {
+            alert(JSON.stringify(e));
         }
-
-        if (dateLayer && dateLayer != null) {
-            dateLayer.clear();
-        }
-
-        if (stage && stage != null) {
-            stage.clear();
-        }
-
-        rootWidth = window.innerWidth;
-        rootHeight = window.innerHeight;
-        stage = new Konva.Stage({
-            container: 'container',
-            width: rootWidth,
-            height: rootHeight,
-        });
-        layer = new Konva.Layer();
-        dateLayer = new Konva.Layer();
-        let r = 60
-        circle = new Konva.Circle({
-            x: stage.getWidth() / 2,
-            y: stage.getHeight() / 2,
-            radius: r, //半径
-            fill: '',
-            stroke: 'white',
-            strokeWidth: 2
-        });
-        dateLayer.add(circle);
-
-        circle.hide();
-
-        drawCircleImage();
-
-        drawAllMonthImage();
-
-        let date = new Date();
-        let currentMonth = date.getMonth() + 1;//从 Date 对象返回月份 (0 ~ 11)
-        let currentDay = date.getDate();
-        let alldays = getDaysByMonth(date.getYear(), currentMonth);
-
-        drawCurrentMonthImage(currentMonth);
-
-        drawAllDaysImage(alldays);
-
-        drawCurrentDayImage(currentDay);
-
-
-        /*
-         *  根据部门对象列表循环添加到UI图层上
-         * */
-        for (let i = 0; i < departmentList.length; i++) {
-            addDepartmentToUI(departmentList[i], i);
-        }
-
-        stage.on('click', function (e) {//Test TODO
-            let num = getRandomInt(0, departmentList.length - 2)//Test TODO
-
-            _this.updateData([
-                {
-                    tagId: departmentList[num].tagId,
-                    totalNum: 50,
-                    currentNum: 30,
-                },
-                {
-                    tagId: departmentList[num + 1].tagId,
-                    totalNum: 50,
-                    currentNum: 20,
-                }
-            ])
-        });
+        // stage.on('click', function (e) {//Test TODO
+        //     let num = getRandomInt(0, departmentList.length - 2)//Test TODO
+        //
+        //     _this.updateData([
+        //         {
+        //             tagId: departmentList[num].tagId,
+        //             totalNum: 50,
+        //             currentNum: 30,
+        //         },
+        //         {
+        //             tagId: departmentList[num + 1].tagId,
+        //             totalNum: 50,
+        //             currentNum: 20,
+        //         }
+        //     ])
+        // });
     }
 
     /*
@@ -252,11 +257,11 @@
             endPointer.y = slope * endPointer.x;
 
         }
-        if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize / 2) {
+        if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize - 30) {
             if (endPointer.y < 0) {
-                endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
+                endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 30);
             } else {
-                endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize);
+                endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 30);
             }
             endPointer.x = endPointer.y / slope;
         }
@@ -312,7 +317,7 @@
         var signedUser = new Konva.Text({
             x: circle.getX() + endPointer.x - imgSize / 2 + 12,
             y: circle.getY() + endPointer.y - imgSize / 2 + 15,
-            text: '0',
+            text: item.currentNum == 0 ? "0" : item.currentNum.toString(),
             fontSize: 18,
             opacity: 0.5,
             fontFamily: 'Calibri',
@@ -325,7 +330,7 @@
         var totalUser = new Konva.Text({
             x: circle.getX() + endPointer.x + 5,
             y: circle.getY() + endPointer.y + 3,
-            text: '0',
+            text: item.totalNum == 0 ? "0" : item.totalNum.toString(),
             opacity: 0.5,
             fontSize: 18,
             fontStyle: 'bold',
@@ -405,11 +410,14 @@
             return {}
         },
         methods: {
+            reloadData() {
+                loadData();
+            },
             updatePercentNum(num) {
                 let fs = 50;
-                let x = num.toString().length >= 2 ? stage.getWidth() / 2 - 35 : stage.getWidth() / 2 - 15
+                let x = num.toString().length >= 2 ? stage.getWidth() / 2 - 25 : stage.getWidth() / 2 - 15
                 if (num.toString().length == 3) {
-                    x = stage.getWidth() / 2 - 55;
+                    x = stage.getWidth() / 2 - 45;
                     fs = 30
                 }
                 let percentNumber = stage.find('#percentNumber')[0];
@@ -520,6 +528,11 @@
                     return;
                 }
 
+                if (signedUser && signedUser.getAbsoluteScale().x > 1) { //已经放大过了
+                    layer.draw(); //re-draw the UI,update tex
+                    return;
+                }
+
                 let rate = 0.3;
                 let arrowLine = stage.find('#arrowLine_' + index)[0];
                 let points = arrowLine.getPoints();
@@ -545,11 +558,11 @@
                     endPointer.y = slope * endPointer.x;
 
                 }
-                if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize) {
+                if (Math.abs(endPointer.y) >= rootHeight / 2 - imgSize - 50) {
                     if (endPointer.y < 0) {
-                        endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 20);
+                        endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 50);
                     } else {
-                        endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 20);
+                        endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - imgSize - 50);
                     }
                     endPointer.x = endPointer.y / slope;
                 }
@@ -566,7 +579,6 @@
                 });
 
                 let bgImage = stage.find('#bgImage_' + index)[0];
-
                 var tweenBgImage = new Konva.Tween({
                     node: bgImage,
                     duration: 1,
@@ -756,6 +768,46 @@
                     tweenGroup.play();
                     tweenArrowLine.play();
                 }, 500);
+            },
+
+            getInitData() {
+                $.ajax({
+                    url: HOST + "user/getInitData",
+                    type: 'GET',
+                    dataType: 'json',
+                    withCredentials: false,               // allow CORS
+                    headers: {
+                        "Access-Control-Allow-Headers": "*"
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            try {
+                                if (res.data && res.data.length > 0) {
+                                    for (let item of res.data) {//填充数据
+                                        for (let i = 0; i < departmentList.length; i++) {
+                                            if (item.tagId == departmentList[i].tagId) {
+                                                departmentList[i] = Object.assign(item, departmentList[i]);
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                            catch (e) {
+                                console.log(e);
+                            }
+                            finally {
+                                loadData();
+                            }
+                        }
+                        else {
+                            loadData();
+                        }
+                    },
+                    error: function (res) {
+                    }
+                })
             }
         },
 
@@ -763,7 +815,22 @@
         filters: {},
         created: function () {
             console.log('created')
-            _this.mainBgImg = require('../assets/img/main.png');
+            // setInterval(() => {
+            //     let num = getRandomInt(0, departmentList.length - 2)//Test TODO
+            //
+            //     _this.updateData([
+            //         {
+            //             tagId: departmentList[num].tagId,
+            //             totalNum: 50,
+            //             currentNum: 30,
+            //         },
+            //         {
+            //             tagId: departmentList[num + 1].tagId,
+            //             totalNum: 50,
+            //             currentNum: 20,
+            //         }
+            //     ])
+            // }, 1000)
         },
         mounted: function () {
             console.log('mounted')
