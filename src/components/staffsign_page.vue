@@ -436,14 +436,15 @@
                 }
                 try {
                     let percentNumber = stage.find('#percentNumber')[0];
+                    if (percentNumber && percentNumber.getText() == num.toString()) {
+                        return;
+                    }
                     if (percentNumber) {
                         percentNumber.remove();
                         percentNumber.destroy();
                         percentNumber = null;
                     }
-                    if (percentNumber && percentNumber.getText() == num.toString()) {
-                        return;
-                    }
+
                     percentNumber = new Konva.Text({
                         x: x,
                         y: stage.getHeight() / 2 - 30,
@@ -487,7 +488,7 @@
                 if (!dataList || dataList.length == 0) {
                     return;
                 }
-                console.log(`[staffsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
+                //console.log(`[staffsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
                 for (let i = 0; i < 1; i++) {
                     _this.updateDataToUI(dataList[i], dataList, (itemList) => {
                         if (!itemList || itemList.length == 0) {
@@ -561,7 +562,7 @@
 
             //有人刷卡，数据更新了，将执行动画
             playZoominAnimation(index, signedData) {
-                console.log(`playZoominAnimation index:${index}\r\nsignedData:\r\n${JSON.stringify(signedData)}`);
+                //console.log(`playZoominAnimation index:${index}\r\nsignedData:\r\n${JSON.stringify(signedData)}`);
 
                 let signedUser = stage.find('#signedUser_' + index)[0];
                 if (signedUser) {
@@ -618,90 +619,111 @@
                     }
                     endPointer.x = endPointer.y / slope;
                 }
-                var tweenArrowLine = new Konva.Tween({
-                    node: arrowLine,
-                    duration: 1,
-                    opacity: 1,
-                    stroke: '#EE8000',
 
-                    points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
-                    onFinish: function () {
-                        // remove all references from Konva
-                        tweenArrowLine.destroy();
+                if (arrowLine) {
+                    var tweenArrowLine = new Konva.Tween({
+                        node: arrowLine,
+                        duration: 1,
+                        opacity: 1,
+                        stroke: '#EE8000',
+
+                        points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
+                        onFinish: function () {
+                            // remove all references from Konva
+                            tweenArrowLine.destroy();
+                        }
+                    });
+                }
+                try {
+                    let bgImage = stage.find('#bgImage_' + index)[0];
+                    if (bgImage) {
+                        var tweenBgImage = new Konva.Tween({
+                            node: bgImage,
+                            duration: 1,
+                            opacity: 1,
+                            x: circle.getX() + endPointer.x - imgSize / 2,
+                            y: circle.getY() + endPointer.y - imgSize / 2,
+                            scaleX: bgImage.getAbsoluteScale().x * (1 + rate + 0.2),
+                            scaleY: bgImage.getAbsoluteScale().y * (1 + rate + 0.2),
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenBgImage.destroy();
+                            }
+                        });
                     }
-                });
 
-                let bgImage = stage.find('#bgImage_' + index)[0];
-                var tweenBgImage = new Konva.Tween({
-                    node: bgImage,
-                    duration: 1,
-                    opacity: 1,
-                    x: circle.getX() + endPointer.x - imgSize / 2,
-                    y: circle.getY() + endPointer.y - imgSize / 2,
-                    scaleX: bgImage.getAbsoluteScale().x * (1 + rate + 0.2),
-                    scaleY: bgImage.getAbsoluteScale().y * (1 + rate + 0.2),
-                    onFinish: function () {
-                        // remove all references from Konva
-                        tweenBgImage.destroy();
+                } catch (e) {
+                    console.log(e);
+                }
+                if (signedUser) {
+                    var tweenSignedUser = new Konva.Tween({
+                        node: signedUser,
+                        duration: 1,
+                        opacity: 1,
+                        scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
+                        scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
+                        x: circle.getX() + endPointer.x - imgSize / 2 + 15,
+                        y: circle.getY() + endPointer.y - imgSize / 2 + 20,
+                        onFinish: function () {
+                            // remove all references from Konva
+                            tweenSignedUser.destroy();
+                        }
+                    });
+                }
+
+                if (totalUser) {
+                    var tweenTotalUser = new Konva.Tween({
+                        node: totalUser,
+                        duration: 1,
+                        opacity: 1,
+                        scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
+                        scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
+                        x: circle.getX() + endPointer.x + 24,
+                        y: circle.getY() + endPointer.y + 20,
+                        onFinish: function () {
+                            // remove all references from Konva
+                            tweenTotalUser.destroy();
+                        }
+                    });
+                }
+                try {
+                    let imgDepart = stage.find('#imgDepart_' + index)[0];
+                    if (imgDepart) {
+                        var tweenImgDepart = new Konva.Tween({
+                            node: imgDepart,
+                            duration: 1,
+                            opacity: 1,
+                            scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
+                            scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
+                            x: circle.getX() + endPointer.x - imgSize / 2 - 75,
+                            y: circle.getY() + endPointer.y + imgSize / 2 + 25,
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenImgDepart.destroy();
+                            }
+                        });
                     }
-                });
 
+                } catch (e) {
+                    console.log(e);
+                }
+                try {
 
-                var tweenSignedUser = new Konva.Tween({
-                    node: signedUser,
-                    duration: 1,
-                    opacity: 1,
-                    scaleX: signedUser.getAbsoluteScale().x * (1 + rate),
-                    scaleY: signedUser.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x - imgSize / 2 + 15,
-                    y: circle.getY() + endPointer.y - imgSize / 2 + 20,
-                    onFinish: function () {
-                        // remove all references from Konva
-                        tweenSignedUser.destroy();
+                    let group = stage.find('#group_' + index)[0];
+                    if (group) {
+                        var tweenGroup = new Konva.Tween({
+                            node: group,
+                            duration: 1,
+                            opacity: 1,
+                            zIndex: 100,
+                            onFinish: function () {
+                                tweenGroup.destroy();
+                            }
+                        });
                     }
-                });
-
-
-                var tweenTotalUser = new Konva.Tween({
-                    node: totalUser,
-                    duration: 1,
-                    opacity: 1,
-                    scaleX: totalUser.getAbsoluteScale().x * (1 + rate),
-                    scaleY: totalUser.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x + 24,
-                    y: circle.getY() + endPointer.y + 20,
-                    onFinish: function () {
-                        // remove all references from Konva
-                        tweenTotalUser.destroy();
-                    }
-                });
-
-                let imgDepart = stage.find('#imgDepart_' + index)[0];
-                var tweenImgDepart = new Konva.Tween({
-                    node: imgDepart,
-                    duration: 1,
-                    opacity: 1,
-                    scaleX: imgDepart.getAbsoluteScale().x * (1 + rate),
-                    scaleY: imgDepart.getAbsoluteScale().y * (1 + rate),
-                    x: circle.getX() + endPointer.x - imgSize / 2 - 75,
-                    y: circle.getY() + endPointer.y + imgSize / 2 + 25,
-                    onFinish: function () {
-                        // remove all references from Konva
-                        tweenImgDepart.destroy();
-                    }
-                });
-
-
-                let group = stage.find('#group_' + index)[0];
-                var tweenGroup = new Konva.Tween({
-                    node: group,
-                    duration: 1,
-                    opacity: 1,
-                    zIndex: 100,
-                    onFinish: function () {
-                        tweenGroup.destroy();
-                    }
-                });
+                } catch (e) {
+                    console.log(e);
+                }
                 departmentList[index].isZoomIn = true;
                 departmentList[index].updateTime = new Date();
                 let tid = setTimeout(function () {
@@ -739,80 +761,102 @@
                         }
                     });
 
+                    try {
+                        let group = stage.find('#group_' + index)[0];
+                        var tweenGroup = new Konva.Tween({
+                            node: group,
+                            duration: 1,
+                            opacity: 1,
+                            zIndex: 0,
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenGroup.destroy();
+                            }
+                        });
 
-                    let group = stage.find('#group_' + index)[0];
-                    var tweenGroup = new Konva.Tween({
-                        node: group,
-                        duration: 1,
-                        opacity: 1,
-                        zIndex: 0,
-                        onFinish: function () {
-                            // remove all references from Konva
-                            tweenGroup.destroy();
-                        }
-                    });
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    try {
+                        let bgImage = stage.find('#bgImage_' + index)[0];
 
-                    let bgImage = stage.find('#bgImage_' + index)[0];
+                        var tweenBgImage = new Konva.Tween({
+                            node: bgImage,
+                            duration: 1,
+                            opacity: 0.7,
+                            scaleX: 1,
+                            scaleY: 1,
+                            x: circle.getX() + endPointer.x - imgSize / 2,
+                            y: circle.getY() + endPointer.y - imgSize / 2,
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenBgImage.destroy();
+                            }
+                        });
 
-                    var tweenBgImage = new Konva.Tween({
-                        node: bgImage,
-                        duration: 1,
-                        opacity: 0.7,
-                        scaleX: 1,
-                        scaleY: 1,
-                        x: circle.getX() + endPointer.x - imgSize / 2,
-                        y: circle.getY() + endPointer.y - imgSize / 2,
-                        onFinish: function () {
-                            // remove all references from Konva
-                            tweenBgImage.destroy();
-                        }
-                    });
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    try {
+                        let signedUser = stage.find('#signedUser_' + index)[0];
+                        var tweenSignedUser = new Konva.Tween({
+                            node: signedUser,
+                            duration: 1,
+                            opacity: 0.5,
+                            scaleX: 1,
+                            scaleY: 1,
+                            x: circle.getX() + endPointer.x - imgSize / 2 + 6,
+                            y: circle.getY() + endPointer.y - imgSize / 2 + 15,
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenSignedUser.destroy();
+                            }
+                        });
 
-                    let signedUser = stage.find('#signedUser_' + index)[0];
-                    var tweenSignedUser = new Konva.Tween({
-                        node: signedUser,
-                        duration: 1,
-                        opacity: 0.5,
-                        scaleX: 1,
-                        scaleY: 1,
-                        x: circle.getX() + endPointer.x - imgSize / 2 + 6,
-                        y: circle.getY() + endPointer.y - imgSize / 2 + 15,
-                        onFinish: function () {
-                            // remove all references from Konva
-                            tweenSignedUser.destroy();
-                        }
-                    });
+                    } catch (e) {
+                        console.log(e);
+                    }
 
-                    let totalUser = stage.find('#totalUser_' + index)[0];
-                    var tweenTotalUser = new Konva.Tween({
-                        node: totalUser,
-                        duration: 1,
-                        opacity: 0.5,
-                        scaleX: 1,
-                        scaleY: 1,
-                        x: circle.getX() + endPointer.x + 8,
-                        y: circle.getY() + endPointer.y + 3,
-                        onFinish: function () {
-                            // remove all references from Konva
-                            tweenTotalUser.destroy();
-                        }
-                    });
+                    try {
 
-                    let imgDepart = stage.find('#imgDepart_' + index)[0];
-                    var tweenImgDepart = new Konva.Tween({
-                        node: imgDepart,
-                        duration: 1,
-                        opacity: 0.5,
-                        scaleX: 0.4,
-                        scaleY: 0.48,
-                        x: circle.getX() + endPointer.x - imgSize / 2 - 55,
-                        y: circle.getY() + endPointer.y + imgSize / 2 + 5,
-                        onFinish: function () {
-                            // remove all references from Konva
-                            tweenImgDepart.destroy();
-                        }
-                    });
+                        let totalUser = stage.find('#totalUser_' + index)[0];
+                        var tweenTotalUser = new Konva.Tween({
+                            node: totalUser,
+                            duration: 1,
+                            opacity: 0.5,
+                            scaleX: 1,
+                            scaleY: 1,
+                            x: circle.getX() + endPointer.x + 8,
+                            y: circle.getY() + endPointer.y + 3,
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenTotalUser.destroy();
+                            }
+                        });
 
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    try {
+
+                        let imgDepart = stage.find('#imgDepart_' + index)[0];
+                        var tweenImgDepart = new Konva.Tween({
+                            node: imgDepart,
+                            duration: 1,
+                            opacity: 0.5,
+                            scaleX: 0.4,
+                            scaleY: 0.48,
+                            x: circle.getX() + endPointer.x - imgSize / 2 - 55,
+                            y: circle.getY() + endPointer.y + imgSize / 2 + 5,
+                            onFinish: function () {
+                                // remove all references from Konva
+                                tweenImgDepart.destroy();
+                            }
+                        });
+
+                    } catch (e) {
+                        console.log(e);
+                    }
                     departmentList[index].isZoomIn = false;
                     let tid = setTimeout(function () {
                         tweenBgImage.play();
