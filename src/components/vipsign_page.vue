@@ -34,7 +34,7 @@
     $(document).ready(function () {
         loadData();
     })
-    $(window).resize(function(){
+    $(window).resize(function () {
         console.log("onresize")
     });
 
@@ -421,6 +421,7 @@
             reloadData() {
                 loadData();
             },
+
             updateData(dataList) {
                 _this.isLoading = true;
                 if (!dataList || dataList.length == 0) {
@@ -445,7 +446,7 @@
             },
 
             updateDataToUI(data, dataList, callback) {
-                setTimeout(() => {
+                let tid = setTimeout(() => {
                     var index = _this.getAvailableIndex();
                     let itemData = Object.assign(data, {
                         updateTime: new Date(),
@@ -456,6 +457,7 @@
 
                     dataList.splice(0, 1);
                     callback(dataList);
+                    window.clearTimeout(tid);
                 }, 200)
             },
 
@@ -504,6 +506,8 @@
                 let dayImage = stage.find('#dayImage')[0];
                 if (dayImage) {
                     dayImage.remove();
+                    dayImage.destroy();
+                    dayImage = null;
                 }
                 drawAllDaysImage(alldays);
             },
@@ -512,6 +516,8 @@
                 let currentMonthImage = stage.find('#currentMonthImage')[0];
                 if (currentMonthImage) {
                     currentMonthImage.remove();
+                    currentMonthImage.destroy();
+                    currentMonthImage = null;
                 }
                 drawCurrentMonthImage(currentMonth);
             },
@@ -520,6 +526,8 @@
                 let currentDayImage = stage.find('#currentDayImage')[0];
                 if (currentDayImage) {
                     currentDayImage.remove();
+                    currentDayImage.destroy();
+                    currentDayImage = null;
                 }
                 drawCurrentDayImage(currentDay);
             },
@@ -639,17 +647,19 @@
                         }
                     });
 
-                    setTimeout(function () {
+                    let tid = setTimeout(function () {
                         tweenUserCircle.play();
                         tweenSignedUser.play();
                         tweenVipImage.play();
                         tweenGroup.play();
                         tweenArrowLine.play();
+                        window.clearTimeout(tid);
                     }, 200);
                 } catch (ex) {
                     console.log(ex);
                     layer.remove();
                     layer.destroy();
+                    layer = null;
                     layer = new Konva.Layer();
                     stage.add(layer);
                 }
@@ -663,10 +673,14 @@
                 let arrowLine = stage.find('#arrowLine_' + index)[0];
                 if (arrowLine) {
                     arrowLine.remove();
+                    arrowLine.destroy();
+                    arrowLine = null;
                 }
                 let group = stage.find('#group_' + index)[0];
                 if (group) {
                     group.remove();
+                    group.destroy();
+                    group = null;
                 }
                 stage.draw();
             },
