@@ -194,7 +194,7 @@
 		    });
 		    layer = new Konva.Layer();
 		    dateLayer = new Konva.Layer();
-		    let r = 100
+		    let r = 60
 		    circle = new Konva.Circle({
 			    x: stage.getWidth() / 2,
 			    y: stage.getHeight() / 2,
@@ -293,10 +293,9 @@
 
     function addDepartmentToUI(item, index) {
 
-	    let angle = 360 / departmentList.length * index;// 算出每一个对象所要显示在圆周上的角度
-
-	    let startPointer = getPointByAngle({x: 0, y: 0}, 200 / 2, angle); //线起始点，随着角度变化 //200 / 2是大圆圈 dayImage的半径，为了防止多出来 的线显示在圆上
-	    var endPointer = generateEndPointer(index, startPointer);
+        let angle = 360 / departmentList.length * index;// 算出每一个对象所要显示在圆周上的角度
+        let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
+        var endPointer = generateEndPointer(index, startPointer);
 
 	    var arrowLine = new Konva.Arrow({
 		    x: circle.getX(),//圆 心
@@ -738,15 +737,15 @@
 			    }, 500);
 		    },
 
-		    //重置状态，部门变小回退到原来位置
-		    playAnimationToReset(index) {
-			    if (!(departmentList[index].isZoomIn && departmentList[index].isZoomIn == true)) {
-				    return;
-			    }
-			    try {
-				    let angle = 360 / departmentList.length * index;// 算出每一个对象所要显示在圆周上的角度
-				    let startPointer = getPointByAngle({x: 0, y: 0}, 200 / 2, angle); //线起始点，随着角度变化 //200 / 2是大圆圈 dayImage的半径，为了防止多出来 的线显示在圆上
-				    var endPointer = generateEndPointer(index, startPointer);
+            //重置状态，部门变小回退到原来位置
+            playAnimationToReset(index) {
+                if (!(departmentList[index].isZoomIn && departmentList[index].isZoomIn == true)) {
+                    return;
+                }
+                try {
+                    let angle = 360 / departmentList.length * index;// 算出每一个对象所要显示在圆周上的角度
+                    let startPointer = getPointByAngle({x: 0, y: 0}, circle.getRadius(), angle); //线起始点，随着角度变化
+                    var endPointer = generateEndPointer(index, startPointer);
 
 				    let arrowLine = stage.find('#arrowLine_' + index)[0];
 				    var tweenArrowLine = new Konva.Tween({
