@@ -13,8 +13,8 @@
             </el-row >
         </div >
 
-        <!--<VipSignPage ref="vipPage" v-show="isShowVIP"></VipSignPage>-->
-        <StaffSignPage ref="staffPage" ></StaffSignPage >
+        <VipSignPage ref="vipPage" v-show="isShowVIP" ></VipSignPage >
+        <StaffSignPage ref="staffPage" v-show="!isShowVIP" ></StaffSignPage >
         <div v-show="isShowLogo"
              :style="divstyle" >
             <img class="col-md-12 el-col-md-offset-9" src="../assets/img/logo.png"
@@ -36,19 +36,9 @@
 			    _this.isShowLogo = true;
 			    return;
 		    }
-		    requestFullScreen();
-		    // setTimeout(() => {
-		    //     if (_this.isShowVIP) {
-		    //         if (_this.$refs.vipPage) {
-		    //             _this.$refs.vipPage.reloadData();
-		    //         }
-		    //     }
-		    //     else {
-		    //         if (_this.$refs.staffPage) {
-		    //             _this.$refs.staffPage.reloadData();
-		    //         }
-		    //     }
-		    // }, 300)
+		    //requestFullScreen();
+		    _this.isShowVIP = !_this.isShowVIP;//TEST TODO
+
 	    };
     });
     $(window).resize(function () {
@@ -184,7 +174,7 @@
 			    currentTime: "",
 			    staffNum: 0,
 			    signInNum: 0,
-			    isShowVIP: false,
+			    isShowVIP: true, //TODO
 			    bgImg: require('../assets/img/main.png'),
 			    currentDate: '',
 			    serverInterval: 0,
@@ -227,8 +217,8 @@
 						    if (res.code == 200) {
 							    try {
 								    if (res.data && res.data.length > 0) {
-									    //_this.isShowVIP = true;
-									    //onShowVipUI(res.data);
+									    _this.isShowVIP = true;
+									    onShowVipUI(res.data);
 								    }
 							    }
 							    catch (e) {
@@ -305,30 +295,6 @@
 						    }
 					    },
 				    })
-
-				    // var params = {
-				    //     api: HOST + "user/getStaffSignInNum",
-				    // };
-				    // api.get(params)
-				    //     .then(function (res) {
-				    //         // alert('success')
-				    //         if (res.code == 200) {
-				    //             _this.signInNum = res.data;
-				    //             let percent = 0;
-				    //             if (_this.staffNum != 0) {
-				    //                 percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
-				    //             }
-				    //             if(_this.$refs.staffPage)
-				    //             {
-				    //                 _this.$refs.staffPage.updatePercentNum(percent);
-				    //             }
-				    //         }
-				    //     })
-				    //     .catch(function (error) {
-				    //         console.log(error);
-				    //         api.reqFail(_this, "服务器访问出错" + error);
-				    //     })
-
 			    }, 800);
 		    }
 
@@ -378,7 +344,7 @@
 <style >
     span {
 	    text-align: center;
-	    font-family: "Microsoft YaHei UI";
+	    font-family: "SquareFont";
 	    font-size: 16px;
 	    opacity: 0.7;
 	    color: white;
@@ -391,5 +357,6 @@
 	    margin-right: 30px;
 	    position: absolute;
 	    z-index: 0;
+	    font-family: "SquareFont";
     }
 </style >

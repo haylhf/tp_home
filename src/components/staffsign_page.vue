@@ -955,6 +955,7 @@
 					    }
 				    },
 			    })
+                //Test TODO
 			    let num = getRandomInt(0, departmentList.length - 1)//Test TODO
 			    _this.updateData([
 				    {
@@ -970,6 +971,7 @@
 			    ])
 			    num = getRandomInt(0, 100)//Test TODO
 			    _this.updatePercentNum(num)
+                //Test TODO
 		    }, 5 * 1000)
 	    },
 	    mounted: function () {
@@ -1015,5 +1017,6 @@
 
     span {
 	    text-align: center;
+        font-family: "SquareFont";
     }
 </style >

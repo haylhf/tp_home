@@ -17,6 +17,11 @@
     }
 </script>
 <style>
-
+@font-face {
+    font-family: 'SquareFont';
+    src: url('./assets/font/Square.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
 
 </style>

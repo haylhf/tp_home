@@ -1,8 +1,13 @@
 <template xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml" >
     <div >
         <div class="col-md-3" >
-            <div style="color: white; font-size: 28px;font-weight: bold;margin-bottom: 10px;margin-top: 10px;margin-left: 5px;" >
-                来访记录
+            <div style="margin-top:50%;margin-left: 5px;" >
+               <sapn style="
+               font-family: SquareFont;
+               color: white;
+               font-size: 18px;" >
+                   来访记录
+               </sapn >
             </div >
             <div class="row" v-for="item in historyList" style="margin-top: 5px;margin-left: 2px;" >
                 <div class="form-inline" >
@@ -213,43 +218,6 @@
 	    drawAllDaysImage(alldays);
 
 	    drawCurrentDayImage(currentDay);
-
-	    stage.on('click', function (e) {//Test TODO
-		    _this.updateData([
-			    {
-				    "birthday": "string",
-				    "company": "string",
-				    "employed_date": "string",
-				    "id": "string",
-				    "identity_number": "string",
-				    "name": "Hello LHF",
-				    "phone": "string",
-				    "remark": "string",
-				    "visit_end_timestamp": 0,
-				    "visit_purpose": "0",
-				    "visit_start_timestamp": 0,
-				    "visit_time_type": "0",
-				    "visitee_name": "string",
-				    "photo": require('../assets/img/male.png'),
-			    },
-			    {
-				    "birthday": "string",
-				    "company": "string",
-				    "employed_date": "string",
-				    "id": "string",
-				    "identity_number": "string",
-				    "name": "Hello HT",
-				    "phone": "string",
-				    "remark": "string",
-				    "visit_end_timestamp": 0,
-				    "visit_purpose": "0",
-				    "visit_start_timestamp": 0,
-				    "visit_time_type": "0",
-				    "visitee_name": "string",
-				    "photo": require('../assets/img/male.png'),
-			    }
-		    ])
-	    });
     }
 
     /*
@@ -258,7 +226,7 @@
      */
     function generateEndPointer(index, startPointer) {
 	    let angle = 360 / MaxCount * index;
-	    let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2) - userImgSize;//这里可以位置的调整取值范围
+	    let arrowLength = getRandomInt(rootWidth / 2 - circle.getRadius(), rootWidth / 2) - userImgSize * 2;//这里可以位置的调整取值范围
 	    let endPointer = getPointByAngle({x: 0, y: 0}, arrowLength * 0.5 - 100, angle);// 外圏结束点，角度不变，仅长度变长。需要考虑右边还有VIP及名字的显示+100
 
 	    if (index % 5 == 0) {
@@ -343,7 +311,7 @@
 		    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
 		    text: item.name,//TODO
 		    fontSize: 16,
-		    fontFamily: 'Calibri',
+		    fontFamily: 'SquareFont',
 		    fill: 'White',
 		    align: 'center',
 		    id: `signedUser_${index}`,
@@ -458,7 +426,7 @@
 				    dataList.splice(0, 1);
 				    callback(dataList);
 				    window.clearTimeout(tid);
-			    }, 200)
+			    }, 300)
 		    },
 
 		    getAvailableIndex: function () {
@@ -540,6 +508,9 @@
 				    let index = item.index;
 				    let rate = 0.4;
 				    let arrowLine = stage.find('#arrowLine_' + index)[0];
+				    if (!arrowLine) {
+					    return;
+				    }
 				    let points = arrowLine.getPoints();
 				    let startPointer = {
 					    x: points[0],
@@ -565,11 +536,11 @@
 					    endPointer.y = slope * endPointer.x;
 
 				    }
-				    if (Math.abs(endPointer.y) >= rootHeight / 2 - userImgSize - 10) {
+				    if (Math.abs(endPointer.y) >= rootHeight / 2 - userImgSize - 30) {
 					    if (endPointer.y < 0) {
-						    endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize - 10);
+						    endPointer.y += Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize - 30);
 					    } else {
-						    endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize - 10);
+						    endPointer.y -= Math.abs(endPointer.y) - (rootHeight / 2 - userImgSize - 30);
 					    }
 					    endPointer.x = endPointer.y / slope;
 				    }
@@ -664,7 +635,7 @@
 					    tweenGroup.play();
 					    tweenArrowLine.play();
 					    window.clearTimeout(tid);
-				    }, 200);
+				    }, 0);
 			    } catch (ex) {
 				    console.log(ex);
 				    layer.remove();
@@ -705,12 +676,12 @@
 		    console.log('mounted')
 		    currentInterval = setInterval(function updateTime() {
 			    try {
-				    let delaytime = 60;
+				    let delaytime = 15;
 				    if (vipsignList.length >= MaxCount - 2) {
-					    delaytime = 10;
+					    delaytime = 5;
 				    }
 				    else if (vipsignList.length >= MaxCount - 5 && vipsignList.length <= MaxCount - 2) {
-					    delaytime = 10 * 3;
+					    delaytime = 10;
 				    }
 				    if (_this.isLoading) {
 					    return;
@@ -718,7 +689,7 @@
 				    for (let i = 0; i < vipsignList.length; i++) {
 					    if (vipsignList[i].updateTime) {
 						    let dtime = new Date() - vipsignList[i].updateTime;  // 计算时间差
-						    let diffTimes = Math.floor(dtime / 1000); //算出总的分钟数差值
+						    let diffTimes = Math.floor(dtime / 1000); //算出总的秒数差值
 						    if (diffTimes >= delaytime) {//delaytime 秒内没有人刷卡，则部门变小回退到原来位置
 							    if (_this.isLoading) {
 								    break;
@@ -732,7 +703,44 @@
 			    } catch (ex) {
 				    console.log(ex);
 			    }
-		    }, 8 * 1000);//定时器每分钟检查一次
+
+//Test TODO
+			    _this.updateData([
+				    {
+					    "birthday": "string",
+					    "company": "string",
+					    "employed_date": "string",
+					    "id": "string",
+					    "identity_number": "string",
+					    "name": "Hello LHF",
+					    "phone": "string",
+					    "remark": "string",
+					    "visit_end_timestamp": 0,
+					    "visit_purpose": "0",
+					    "visit_start_timestamp": 0,
+					    "visit_time_type": "0",
+					    "visitee_name": "string",
+					    "photo": require('../assets/img/male.png'),
+				    },
+				    {
+					    "birthday": "string",
+					    "company": "string",
+					    "employed_date": "string",
+					    "id": "string",
+					    "identity_number": "string",
+					    "name": "Hello HT",
+					    "phone": "string",
+					    "remark": "string",
+					    "visit_end_timestamp": 0,
+					    "visit_purpose": "0",
+					    "visit_start_timestamp": 0,
+					    "visit_time_type": "0",
+					    "visitee_name": "string",
+					    "photo": require('../assets/img/male.png'),
+				    }
+			    ])
+
+		    }, 5 * 1000);//定时器每段时间检查一次
 	    },
 	    destroyed: function () {
 		    window.clearInterval(currentInterval);
@@ -755,5 +763,11 @@
 
     span {
 	    text-align: center;
+	    font-family: "SquareFont";
+	    color: white;
+    }
+
+    div {
+	    font-family: "SquareFont";
     }
 </style >
