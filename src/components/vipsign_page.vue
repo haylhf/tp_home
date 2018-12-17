@@ -400,7 +400,7 @@
 				    _this.playAnimationToReset(vipsignList[0]);
 				    vipsignList.splice(0, 1);
 			    }
-			    console.log(`[vipsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
+			    //console.log(`[vipsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
 			    for (let i = 0; i < 1; i++) {
 				    _this.updateDataToUI(dataList[i], dataList, (itemList) => {
 					    _this.isLoading = false;
@@ -503,14 +503,13 @@
 		    //有人刷卡，数据更新了，将执行动画
 		    playZoominAnimation(item) {
 			    try {
-				    console.log(`playZoominAnimation index:${index}`)
-
 				    let index = item.index;
 				    let rate = 0.4;
 				    let arrowLine = stage.find('#arrowLine_' + index)[0];
 				    if (!arrowLine) {
 					    return;
 				    }
+				    console.log(`playZoominAnimation index:${index}`)
 				    let points = arrowLine.getPoints();
 				    let startPointer = {
 					    x: points[0],
@@ -649,21 +648,45 @@
 
 		    //重置状态，部门变小回退到原来位置
 		    playAnimationToReset(item) {
-			    let index = item.index;
-			    console.log(`playAnimationToReset index: ${index}`);
-			    let arrowLine = stage.find('#arrowLine_' + index)[0];
-			    if (arrowLine) {
-				    arrowLine.remove();
-				    arrowLine.destroy();
-				    arrowLine = null;
+			    try {
+				    let index = item.index;
+				    console.log(`playAnimationToReset index: ${index}`);
+				    let arrowLine = stage.find('#arrowLine_' + index)[0];
+				    if (arrowLine) {
+					    arrowLine.remove();
+					    arrowLine.destroy();
+					    arrowLine = null;
+				    }
+				    let group = stage.find('#group_' + index)[0];
+				    if (group) {
+					    group.remove();
+					    group.destroy();
+					    group = null;
+				    }
+				    let userCircle = stage.find('#userCircle_' + index)[0];
+				    if (userCircle) {
+					    userCircle.remove();
+					    userCircle.destroy();
+					    userCircle = null;
+				    }
+
+				    let signedUser = stage.find('#signedUser_' + index)[0];
+				    if (signedUser) {
+					    signedUser.remove();
+					    signedUser.destroy();
+					    signedUser = null;
+				    }
+
+				    let vipImage = stage.find('#vipImage_' + index)[0];
+				    if (vipImage) {
+					    vipImage.remove();
+					    vipImage.destroy();
+					    vipImage = null;
+				    }
+				    stage.draw();
+			    } catch (e) {
+				    console.log(e);
 			    }
-			    let group = stage.find('#group_' + index)[0];
-			    if (group) {
-				    group.remove();
-				    group.destroy();
-				    group = null;
-			    }
-			    stage.draw();
 		    },
 	    },
 
