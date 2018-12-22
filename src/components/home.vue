@@ -13,14 +13,14 @@
             </el-row >
         </div >
 
-        <VipSignPage ref="vipPage" v-show="isShowVIP" ></VipSignPage >
-        <StaffSignPage ref="staffPage" v-show="!isShowVIP" ></StaffSignPage >
-        <div v-show="isShowLogo"
-             :style="divstyle" >
-            <img class="col-md-12 el-col-md-offset-9" src="../assets/img/logo.png"
-                 style="margin-top: 20px; width: 500px;height: 56px;" />
+        <VipSignPage ref="vipPage" v-show="isShowVIP" v-if="!resetVIP"></VipSignPage>
+        <StaffSignPage ref="staffPage" v-show="!isShowVIP" v-if="!resetStaff"></StaffSignPage >
+        <!--<div v-show="isShowLogo"-->
+             <!--:style="divstyle" >-->
+            <!--<img class="col-md-12 el-col-md-offset-9" src="../assets/img/logo.png"-->
+                 <!--style="margin-top: 20px; width: 500px;height: 56px;" />-->
 
-        </div >
+        <!--</div >-->
     </div >
 
 </template >
@@ -33,20 +33,39 @@
 
 	    document.onclick = () => {
 		    if (checkFull()) {
-			    _this.isShowLogo = true;
+			    //_this.isShowLogo = true;
 			    return;
 		    }
-		    //requestFullScreen();
-		    _this.isShowVIP = !_this.isShowVIP;//TEST TODO
-
+		    requestFullScreen();
+            reset("STAFF");
 	    };
     });
     $(window).resize(function () {
-	    _this.isShowLogo = false;
-	    if (checkFull()) {
-		    _this.isShowLogo = true;
-	    }
+	    // _this.isShowLogo = false;
+	    // if (checkFull()) {
+		 //    _this.isShowLogo = true;
+	    // }
     });
+    function reset(type) {
+        _this.resetStaff = true;
+        _this.resetVIP = true;
+        _this.$nextTick(() => {
+            _this.resetStaff = type == "VIP";
+            alert(_this.resetStaff)
+            _this.resetVIP = !_this.resetStaff;
+            setTimeout(() => {
+                if (_this.isShowVIP) {
+                    if (_this.$refs.vipPage) {
+                        _this.$refs.vipPage.reloadData();
+                    }
+                } else {
+                    if (_this.$refs.staffPage) {
+                        _this.$refs.staffPage.reloadData();
+                    }
+                }
+            }, 100)
+        })
+    }
     // var hostname = MqttServer,
     //     port = ServerPort,
     //     clientId = `client-${newGuid()}`,
@@ -134,7 +153,7 @@
 		    }
 		    data.device_id = signData.device_id;
 		    // data.photo = require('../assets/img/male.png');
-		    data.photo = signData.person.face_list[0].face_image_id;//http://api.vaiwan.com:8081/image/
+		    data.photo = "http://192.168.0.119:9812" + "/image/"+signData.person.face_list[0].face_image_id;//http://api.vaiwan.com:8081/image/
 		    dataList.push(data);
 	    }
 	    if (_this.$refs.vipPage && dataList.length > 0) {
@@ -174,7 +193,7 @@
 			    currentTime: "",
 			    staffNum: 0,
 			    signInNum: 0,
-			    isShowVIP: true, //TODO
+			    isShowVIP: false,
 			    bgImg: require('../assets/img/main.png'),
 			    currentDate: '',
 			    serverInterval: 0,
@@ -184,6 +203,9 @@
 				    "width": "100%",
 				    "height": "100%"
 			    },
+                resetStaff:false,
+                resetVIP:false,
+                vipTimeOutId:""
 		    }
 	    },
 	    methods: {
@@ -217,8 +239,18 @@
 						    if (res.code == 200) {
 							    try {
 								    if (res.data && res.data.length > 0) {
-									    _this.isShowVIP = true;
-									    onShowVipUI(res.data);
+								        if(_this.isShowVIP) {
+								            //当连续来VIP的情况
+                                            clearTimeout(_this.vipTimeOutId);
+                                        } else {
+                                            _this.isShowVIP = true;
+                                            reset("VIP");
+                                        }
+                                        _this.vipTimeOutId = setTimeout(()=>{
+                                            _this.isShowVIP = false;
+                                            reset("STAFF");
+                                        }, 15000)
+                                        onShowVipUI(res.data);
 								    }
 							    }
 							    catch (e) {
@@ -242,7 +274,7 @@
 						    if (res.code == 200) {
 							    try {
 								    if (res.data && res.data.length > 0) {
-									    _this.isShowVIP = false;
+									    //_this.isShowVIP = false;
 									    onVisitorSign(res.data);
 								    }
 							    }
