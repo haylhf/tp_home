@@ -332,18 +332,18 @@
                     id: `vipImage_${index}`
                 });
                 group.add(img);
-                group.add(signedUser);
-                group.add(userCircle);
-                layer.add(group);
-                stage.add(layer);
-                vipsignList.push(item);
-                if (_this.historyList.length >= HistoryMAXCOUNT) {
-                    _this.historyList.splice(0, 1);
-                }
-                _this.historyList.push(item);
                 stage.draw();
             };
             vipImage.src = require(`../assets/img/vip_tips.png`);
+            group.add(signedUser);
+            group.add(userCircle);
+            layer.add(group);
+            stage.add(layer);
+            vipsignList.push(item);
+            if (_this.historyList.length >= HistoryMAXCOUNT) {
+                _this.historyList.splice(0, 1);
+            }
+            _this.historyList.push(item);
         };
     }
 
@@ -387,6 +387,13 @@
                 if (sessionList && sessionList.length > 0) {
                     for (let item of sessionList) {
                         item.updateTime = new Date();
+                        console.log(`loadSessionData index:${item.index}`)
+                        for (let vipItem of vipsignList) {
+                            if (item.index == vipItem.index) {//已经存在了，避免重合
+                                item.index = _this.getAvailableIndex();
+                                console.log(`loadSessionData new index:${item.index}`)
+                            }
+                        }
                         addDepartmentToUI(item);
                     }
                 }
@@ -902,6 +909,7 @@
             if (vipsignList && vipsignList.length > 0) {
                 sessionStorage.setItem("sessionList", JSON.stringify(vipsignList));
             }
+            vipsignList = [];
             window.clearInterval(currentInterval);
             window.clearInterval(currentFakeDataInterval);
             layer.destroy();
