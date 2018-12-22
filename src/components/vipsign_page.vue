@@ -37,7 +37,6 @@
     const MaxCount = 10;
     const HistoryMAXCOUNT = 6;
 
-
     $(document).ready(function () {
         loadData();
     })
@@ -322,29 +321,27 @@
                 id: `signedUser_${index}`,
             });
 
-        var vipImage = new Image();//Html Image
-        vipImage.onload = function () {
-            let img = new Konva.Image({
-                image: vipImage,
-                x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 70,
-                y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
-                width: 35,
-                height: 14,
-                id: `vipImage_${index}`
-            });
-            group.add(img);
-            group.add(signedUser);
-            group.add(userCircle);
-            layer.add(group);
-            stage.add(layer);
-            vipsignList.push(item);
-            if (_this.historyList.length >= HistoryMAXCOUNT) {
-                _this.historyList.splice(0, 1);
-            }
-            _this.historyList.push(item);
-
-            _this.playZoominAnimation(item);
-
+            var vipImage = new Image();//Html Image
+            vipImage.onload = function () {
+                let img = new Konva.Image({
+                    image: vipImage,
+                    x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 70,
+                    y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2,
+                    width: 35,
+                    height: 14,
+                    id: `vipImage_${index}`
+                });
+                group.add(img);
+                group.add(signedUser);
+                group.add(userCircle);
+                layer.add(group);
+                stage.add(layer);
+                vipsignList.push(item);
+                if (_this.historyList.length >= HistoryMAXCOUNT) {
+                    _this.historyList.splice(0, 1);
+                }
+                _this.historyList.push(item);
+                stage.draw();
             };
             vipImage.src = require(`../assets/img/vip_tips.png`);
         };
@@ -378,11 +375,27 @@
         return point;
     }
 
-    import Vue from 'vue'
-
     var currentInterval = 0;
     var currentFakeDataInterval = 0;
     var _this
+
+    function loadSessionData() {
+        var sessionList = sessionStorage.getItem("sessionList");
+        try {
+            if (sessionList && sessionList.length > 0) {
+                sessionList = JSON.parse(sessionList);
+                if (sessionList && sessionList.length > 0) {
+                    for (let item of sessionList) {
+                        item.updateTime = new Date();
+                        addDepartmentToUI(item);
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     export default {
         name: "VipSignPage",
         components: {},
@@ -397,6 +410,7 @@
             reloadData() {
                 setTimeout(() => {
                     loadData()
+                    loadSessionData();
                 }, 100)
             },
 
@@ -404,6 +418,9 @@
                 _this.isLoading = true;
                 if (!dataList || dataList.length == 0) {
                     return;
+                }
+                if (!stage) {
+                    sleep(300);
                 }
 
                 if (vipsignList.length >= MaxCount) {
@@ -413,6 +430,7 @@
                 //console.log(`[vipsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
                 for (let i = 0; i < 1; i++) {
                     _this.updateDataToUI(dataList[i], dataList, (itemList) => {
+
                         _this.isLoading = false;
                         if (!itemList || itemList.length == 0) {
                             return;
@@ -431,12 +449,14 @@
                         index: index,
                     });
                     addDepartmentToUI(itemData);
-                    stage.draw();
 
+                    setTimeout(() => {
+                        _this.playZoominAnimation(itemData);
+                    }, 50)
                     dataList.splice(0, 1);
                     callback(dataList);
                     window.clearTimeout(tid);
-                }, 300)
+                }, 100)
             },
 
             getAvailableIndex: function () {
@@ -717,7 +737,7 @@
                         y: circle.getY(),//圆 心
                         duration: 1,
                         opacity: 0.5,
-                        zIndex: -100,
+                        zIndex: -1000,
                         stroke: '#DF6911',
                         points: [startPointer.x, startPointer.y, endPointer.x, endPointer.y],
                         onFinish: function () {
@@ -861,15 +881,15 @@
                                 }
                                 _this.playAnimationToSmall(vipsignList[i]);
                             }
-                            // if (vipsignList.length >= HistoryMAXCOUNT) {
-                            //     if (diffTimes >= delaytime * 2) {//delaytime 秒内没有人刷卡，则部门变小回退到原来位置
-                            //         if (_this.isLoading) {
-                            //             break;
-                            //         }
-                            //         _this.playAnimationToReset(vipsignList[i]);
-                            //         vipsignList.splice(i, 1);
-                            //     }
-                            // }
+                            if (vipsignList.length >= HistoryMAXCOUNT) {
+                                if (diffTimes >= delaytime * 2) {//delaytime 秒内没有人刷卡，则部门变小回退到原来位置
+                                    if (_this.isLoading) {
+                                        break;
+                                    }
+                                    _this.playAnimationToReset(vipsignList[i]);
+                                    vipsignList.splice(i, 1);
+                                }
+                            }
                         }
                     }
                 } catch (ex) {
@@ -879,6 +899,9 @@
             }, 5 * 1000);//定时器每段时间检查一次
         },
         destroyed: function () {
+            if (vipsignList && vipsignList.length > 0) {
+                sessionStorage.setItem("sessionList", JSON.stringify(vipsignList));
+            }
             window.clearInterval(currentInterval);
             window.clearInterval(currentFakeDataInterval);
             layer.destroy();
