@@ -439,9 +439,9 @@
 	    },
 	    methods: {
 		    reloadData() {
-			    // setTimeout(() => {
-			    //     loadData()
-			    // }, 1000)
+			    setTimeout(() => {
+			        loadData()
+			    }, 0)
 		    },
 		    updatePercentNum(num) {
 			    let fs = 50;

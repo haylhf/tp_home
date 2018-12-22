@@ -21,6 +21,7 @@
         <!--style="margin-top: 20px; width: 500px;height: 56px;" />-->
 
         <!--</div >-->
+        <!--<el-button @click="siwtchToVIP()">切换VIP</el-button>-->
     </div>
 
 </template>
@@ -33,12 +34,14 @@
 
         document.onclick = () => {
             _this.isShowVIP = !_this.isShowVIP;//TODO
-            if (checkFull()) {
-                //_this.isShowLogo = true;
-                return;
+            // if (checkFull()) {
+            //     //_this.isShowLogo = true;
+            //     return;
+            // }
+            if(!checkFull()) {
+                requestFullScreen();
             }
-            requestFullScreen();
-            reset("STAFF");
+            reset(_this.isShowVIP ? "VIP" : "STAFF");
         };
     });
     $(window).resize(function () {
@@ -53,7 +56,7 @@
         _this.resetVIP = true;
         _this.$nextTick(() => {
             _this.resetStaff = type == "VIP";
-            alert(_this.resetStaff)
+            //alert(_this.resetStaff)
             _this.resetVIP = !_this.resetStaff;
             setTimeout(() => {
                 if (_this.isShowVIP) {
@@ -212,6 +215,10 @@
             }
         },
         methods: {
+            siwtchToVIP() {
+                _this.isShowVIP = true;
+                reset("VIP");
+            },
             onSend() {
                 let strMsg = _this.sendText;// document.getElementById("msg").value;
                 if (strMsg) {

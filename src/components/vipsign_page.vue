@@ -289,38 +289,38 @@
         });
 
         let circlePointer = getPointByAngle(endPointer, userImgSize / 2, angle);
-        let userCircle = new Konva.Circle({
-            x: circle.getX() + circlePointer.x,
-            y: circle.getY() + circlePointer.y,
-            radius: userImgSize / 2, //半径
-            fill: '',
-            stroke: 'rgb(255,105,42)',
-            strokeWidth: 4,
-            id: `userCircle_${index}`,
-            fillPatternOffset: {x: 100, y: 100},
-            fillPatternRepeat: 'no-repeat',
-            fillPatternScale: {
-                x: 0.5,
-                y: 0.5,
-            }
-        });
+
         let imageObj = new Image();
-        imageObj.onload = function () {
-            userCircle.fillPatternImage(imageObj);
-        };
-
         imageObj.src = photoURL + item.photo;
+        imageObj.onload = function () {
 
-        var signedUser = new Konva.Text({
-            x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 70,
-            y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
-            text: item.name,//TODO
-            fontSize: 12,
-            fontFamily: 'SquareFont',
-            fill: 'White',
-            align: 'center',
-            id: `signedUser_${index}`,
-        });
+            let userCircle = new Konva.Circle({
+                x: circle.getX() + circlePointer.x,
+                y: circle.getY() + circlePointer.y,
+                radius: userImgSize / 2, //半径
+                fill: '',
+                stroke: 'rgb(255,105,42)',
+                strokeWidth: 4,
+                id: `userCircle_${index}`,
+                fillPatternOffset: {x: imageObj.width / 2, y: imageObj.height / 2},
+                fillPatternRepeat: 'no-repeat',
+                fillPatternScale: {
+                    x: 90 / imageObj.width,
+                    y: 90 / imageObj.height,
+                }
+            });
+            userCircle.fillPatternImage(imageObj);
+
+            var signedUser = new Konva.Text({
+                x: circle.getX() + circlePointer.x - userCircle.getRadius() / 2 + 70,
+                y: circle.getY() + circlePointer.y - userCircle.getRadius() / 2 + 30,
+                text: item.name,//TODO
+                fontSize: 12,
+                fontFamily: 'SquareFont',
+                fill: 'White',
+                align: 'center',
+                id: `signedUser_${index}`,
+            });
 
         var vipImage = new Image();//Html Image
         vipImage.onload = function () {
@@ -345,9 +345,9 @@
 
             _this.playZoominAnimation(item);
 
-
+            };
+            vipImage.src = require(`../assets/img/vip_tips.png`);
         };
-        vipImage.src = require(`../assets/img/vip_tips.png`);
     }
 
     /*
@@ -381,6 +381,7 @@
     import Vue from 'vue'
 
     var currentInterval = 0;
+    var currentFakeDataInterval = 0;
     var _this
     export default {
         name: "VipSignPage",
@@ -394,7 +395,9 @@
         },
         methods: {
             reloadData() {
-                loadData();
+                setTimeout(() => {
+                    loadData()
+                }, 100)
             },
 
             updateData(dataList) {
@@ -798,7 +801,7 @@
         },
         mounted: function () {
             console.log('mounted')
-            setInterval(() => {
+            currentFakeDataInterval = setInterval(() => {
                 //Test TODO
                 _this.updateData([
                     {
@@ -877,6 +880,7 @@
         },
         destroyed: function () {
             window.clearInterval(currentInterval);
+            window.clearInterval(currentFakeDataInterval);
             layer.destroy();
             dateLayer.destroy();
             stage.destroy();
