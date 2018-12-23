@@ -14,7 +14,7 @@
         </div >
 
         <!--<VipSignPage ref="vipPage" v-show="isShowVIP" v-if="!resetVIP"></VipSignPage>-->
-        <StaffSignPage ref="staffPage" :isVip="isShowVIP" ></StaffSignPage >
+        <StaffSignPage ref="staffPage" :isVip="isShowVIP" v-if="!resetStaff"></StaffSignPage >
 
     </div >
 
@@ -24,35 +24,49 @@
     $(document).ready(function () {
 	    document.onclick = () => {
 
-            //TEST TODO
-		    let isvip = !_this.isShowVIP;
-		    if (_this.isShowVIP != isvip) {
-			    if (_this.$refs.staffPage) {
-				    _this.$refs.staffPage.reloadData(isvip);
-				    _this.isShowVIP = isvip;
-			    }
-		    }
-            //TEST TODO
-
             if (!checkFull()) {
                 requestFullScreen();
+                reset();
+            }else {
+                //TEST TODO
+                // let isvip = !_this.isShowVIP;
+                // if (_this.isShowVIP != isvip) {
+                //     if (_this.$refs.staffPage) {
+                //         _this.$refs.staffPage.reloadData(isvip);
+                //         _this.isShowVIP = isvip;
+                //     }
+                // }
+                //TEST TODO
             }
 	    };
     });
+    function reset() {
+        _this.resetStaff = true;
+        _this.$nextTick(() => {
+            _this.resetStaff = false;
+            setTimeout(() => {
+                if (_this.$refs.staffPage) {
+
+                    _this.$refs.staffPage.initData();
+                    //_this.$refs.staffPage.reloadData(!_this.isShowVIP);
+                }
+            }, 3000)
+        })
+    }
 
     function onShowVipUI(signDataList) {
-	    var dataList = [];
-	    for (let i = 0; i < signDataList.length; i++) {
-		    let signData = signDataList[i];
-		    let data = Object.assign(signData.person.person_information);
-		    try {
-			    data.signTime = new Date(signData.timestamp * 1000).format("hh:mm:ss");
-		    } catch (e) {
-		    }
-		    data.device_id = signData.device_id;
-		    // data.photo = require('../assets/img/male.png');
-		    data.photo = "http://192.168.0.119:9812" + "/image/" + signData.person.face_list[0].face_image_id;//http://api.vaiwan.com:8081/image/
-		    dataList.push(data);
+        var dataList = [];
+        for (let i = 0; i < signDataList.length; i++) {
+            let signData = signDataList[i];
+            let data = Object.assign(signData.person.person_information);
+            try {
+                data.signTime = new Date(signData.timestamp * 1000).format("hh:mm:ss");
+            } catch (e) {
+            }
+            data.device_id = signData.device_id;
+            // data.photo = require('../assets/img/male.png');
+            data.photo = photoURL + signData.person.face_list[0].face_image_id;//http://api.vaiwan.com:8081/image/
+            dataList.push(data);
 	    }
 	    if (_this.$refs.staffPage && dataList.length > 0 && _this.isShowVIP) {
 		    _this.$refs.staffPage.updateDataVip(dataList);
@@ -172,10 +186,9 @@
 							    try {
 								    if (res.data && res.data.length > 0) {
 
-									    if (_this.isShowVIP != false) {
+									    if (!_this.isShowVIP) {
 										    if (_this.$refs.staffPage) {
 											    _this.$refs.staffPage.reloadData(false);
-											    _this.isShowVIP = false;
 											    setTimeout(function load() {
 												    onVisitorSign(res.data);
 											    }, 200)

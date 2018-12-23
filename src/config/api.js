@@ -6,7 +6,7 @@ var MqttServer = `47.100.9.64`;
 var ServerPort = Number(61623);
 var SOCKECT_SERVER = "ws://172.16.30.30:9090/websocket";
 var ServerTOPIC = ["staff/sign_in", "staff/vip/sign_in"];
-var photoURL = "";
+var photoURL = "http://10.17.4.28" + ":9812/image/";
 
 
 const STATISTICS_DATE_MODE = {
