@@ -50,7 +50,7 @@
                     _this.$refs.staffPage.initData();
                     //_this.$refs.staffPage.reloadData(!_this.isShowVIP);
                 }
-            }, 3000)
+            }, 2000)
         })
     }
 
@@ -149,7 +149,7 @@
 											    _this.$refs.staffPage.reloadData(true);
 											    setTimeout(function load() {
 												    onShowVipUI(res.data);
-											    }, 200)
+											    }, 2000)
 										    }
 										    _this.isShowVIP = true;
 									    }
@@ -191,7 +191,7 @@
 											    _this.$refs.staffPage.reloadData(false);
 											    setTimeout(function load() {
 												    onVisitorSign(res.data);
-											    }, 200)
+											    }, 2000)
 										    }
 									    } else {
 										    onVisitorSign(res.data);

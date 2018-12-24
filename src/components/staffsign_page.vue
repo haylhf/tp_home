@@ -695,16 +695,16 @@
             stage.add(layer);
             stage.draw();
             //
-	    vipsignList.push(item);
+	        vipsignList.unshift(item);
 	    
-            let foundIndex = 0;
+            let foundIndex = -1;
             for (let i = 0; i < _this.historyList.length; i++) {
                 if(_this.historyList[i].photo === item.photo) {
                     foundIndex = i;
                     break;
                 }
             }
-            if(foundIndex) {
+            if(foundIndex != -1) {
                 //alert(foundIndex)
                 _this.historyList.splice(foundIndex, 1);
                 _this.historyList.unshift(item);
@@ -1269,10 +1269,10 @@
                     sleep(300);
                 }
 
-                if (vipsignList.length >= MaxCount) {
-                    _this.playAnimationToResetVip(vipsignList[0]);
-                    vipsignList.splice(0, 1);
-                }
+                // if (vipsignList.length >= MaxCount) {
+                //     _this.playAnimationToResetVip(vipsignList[vipsignList.length - 1]);
+                //     vipsignList.splice(vipsignList.length - 1, 1);
+                // }
                 //console.log(`[vipsign] updateData dataList:\r\n${JSON.stringify(dataList)}`);
                 for (let i = 0; i < 1; i++) {
                     _this.updateDataToUIVip(dataList[i], dataList, (itemList) => {
@@ -1281,9 +1281,14 @@
                         if (!itemList || itemList.length == 0) {
                             return;
                         }
+                        //多余部分移除
+                        if (vipsignList.length >= MaxCount) {
+                            _this.playAnimationToResetVip(vipsignList[vipsignList.length - 1]);
+                            vipsignList.splice(vipsignList.length - 1, 1);
+                        }
                         _this.updateDataVip(itemList);
                     });
-                    break
+                    //break
                 }
             },
 
@@ -1293,12 +1298,13 @@
 				    for (let item of vipsignList) {
 					    if (data.photo == item.photo && data.name == item.name) {
 						    _this.playAnimationToResetVip(item);//remove the old one from UI konvas
-						    foundIndex = _this.historyList.indexOf(item);
-						    _this.historyList.splice(foundIndex, 1);//remove the old one from history
+						    // foundIndex = _this.historyList.indexOf(item);
+						    // _this.historyList.splice(foundIndex, 1);//remove the old one from history
 						    foundIndex = vipsignList.indexOf(item);
 						    break;
 					    }
 				    }
+				    //有重复的部分，先移除再加上
 				    if (foundIndex != -1) {
 					    vipsignList.splice(foundIndex, 1);//remove the old one
 				    }
@@ -1768,6 +1774,7 @@
                                         }
                                         _this.playAnimationToResetVip(vipsignList[i]);
                                         vipsignList.splice(i, 1);
+                                        break;
                                     }
                                 }
                             }
