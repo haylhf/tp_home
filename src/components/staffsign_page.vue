@@ -1287,13 +1287,27 @@
                 }
             },
 
-            updateDataToUIVip(data, dataList, callback) {
-                let tid = setTimeout(() => {
-                    var index = _this.getAvailableIndexVip();
-                    let itemData = Object.assign(data, {
-                        updateTime: new Date(),
-                        index: index,
-                    });
+		    updateDataToUIVip(data, dataList, callback) {
+			    let tid = setTimeout(() => {
+				    let foundIndex = -1;
+				    for (let item of vipsignList) {
+					    if (data.photo == item.photo && data.name == item.name) {
+						    _this.playAnimationToResetVip(item);//remove the old one from UI konvas
+						    foundIndex = _this.historyList.indexOf(item);
+						    _this.historyList.splice(foundIndex, 1);//remove the old one from history
+						    foundIndex = vipsignList.indexOf(item);
+						    break;
+					    }
+				    }
+				    if (foundIndex != -1) {
+					    vipsignList.splice(foundIndex, 1);//remove the old one
+				    }
+
+				    var index = _this.getAvailableIndexVip();
+				    let itemData = Object.assign(data, {
+					    updateTime: new Date(),
+					    index: index,
+				    });
                     addDepartmentToUIVip(itemData);
 
                     setTimeout(() => {
@@ -1305,36 +1319,36 @@
                 }, 100)
             },
 
-            getAvailableIndexVip: function () {
-                let index = -1;
-                if (vipsignList.length == 0) {
-                    index = 0;
-                }
-                else {
-                    for (let i = 0; i < MaxCount; i++) {
-                        let isFound = false;
-                        for (let item of vipsignList) {
-                            if (item.index == i) {
-                                isFound = true;
-                                break;
-                            }
-                        }
-                        if (!isFound) {
-                            index = i;
-                            break;
-                        }
-                    }
-                }
-                if (index == -1) {
-                    if (vipsignList.length > 0) {
-                        index = vipsignList[0].index;
-                        _this.playAnimationToReset(vipsignList[0]);
-                        vipsignList.splice(0, 1);
-                        sleep(100);
-                    }
-                }
-                return index;
-            },
+		    getAvailableIndexVip: function () {
+			    let index = -1;
+			    if (vipsignList.length == 0) {
+				    index = 0;
+			    }
+			    else {
+				    for (let i = 0; i < MaxCount; i++) {
+					    let isFound = false;
+					    for (let item of vipsignList) {
+						    if (item.index == i) {
+							    isFound = true;
+							    break;
+						    }
+					    }
+					    if (!isFound) {
+						    index = i;
+						    break;
+					    }
+				    }
+			    }
+			    if (index == -1) {
+				    if (vipsignList.length > 0) {
+					    index = vipsignList[0].index;
+					    _this.playAnimationToResetVip(vipsignList[0]);
+					    vipsignList.splice(0, 1);
+					    sleep(100);
+				    }
+			    }
+			    return index;
+		    },
 
 
             //有人刷卡，数据更新了，将执行动画
