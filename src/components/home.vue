@@ -240,17 +240,17 @@
 			    }
 
 			    //TODO:
-                if (_this.isShowVIP) {
-                    //当连续来VIP的情况
-                    clearTimeout(_this.vipTimeOutId);
-                    onShowVipUI([]);
-                } else {
-                    onShowVipUI([]);
-                    _this.isShowVIP = true;
-                }
-                _this.vipTimeOutId = setTimeout(() => {
-                    _this.isShowVIP = false;
-                }, 10000)
+                // if (_this.isShowVIP) {
+                 //    //当连续来VIP的情况
+                 //    clearTimeout(_this.vipTimeOutId);
+                 //    onShowVipUI([]);
+                // } else {
+                 //    onShowVipUI([]);
+                 //    _this.isShowVIP = true;
+                // }
+                // _this.vipTimeOutId = setTimeout(() => {
+                 //    _this.isShowVIP = false;
+                // }, 10000)
             }, 60 * 1000);//定时器
 		    _this.getDataFromServer();
             if (_this.$refs.staffPage) {

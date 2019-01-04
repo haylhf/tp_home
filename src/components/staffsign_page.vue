@@ -1,6 +1,6 @@
 <template xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <div>
-        <div style="position: fixed;opacity: 0.8;background-color:black;z-index: 1000;width: 100%;height: 100%;"
+        <div style="position: fixed;opacity: 0.7;background-color:black;z-index: 1000;width: 100%;height: 100%;"
              v-show="isVip">
             <table style="width: 100%;height: 100%;">
                 <tr>
@@ -30,15 +30,16 @@
                     <td style="width: 60%;">
                         <el-row type="flex" justify="center">
                             <el-col :span="8" v-for="item in vipsignList" :id="item.uiId"
-                                    style="animation-duration:1s;">
+                                    style="animation-duration:1s;text-align: center">
                                 <img style="margin-top: 18px;border: solid 2px orangered; border-radius: 50%;align-items: center;justify-content: center;
                                     overflow: hidden;" :src="item.photo" width="180px;" height="180px;"/>
-                                <div class="row" style="margin-left: 20px;margin-top: 10px;">
+                                <div class="row" style="text-align: center; margin-top: 10px;">
                                     <img :src="getVipImage()" style="width: 40px;height: 25px;"/>
-                                    <span style="font-size: 20px;margin-left: 5px; color: white;font-family: SquareFont">WELCOME</span>
+                                    <span style="height:25px;font-size: 20px;margin-left: 5px; padding-top:10px; color: white;font-family: SquareFont">WELCOME</span>
                                 </div>
-                                <br>
-                                <span style="margin-top: 10px;margin-left:15px;font-size: 34px;color: white;font-family: SquareFont">{{item.name}}</span>
+                                <div style="text-align: center">
+                                    <span style="margin-top: 15px;letter-spacing:5px;font-size: 34px;color: white;font-family: SquareFont">{{item.name}}</span>
+                                </div>
                             </el-col>
                         </el-row>
                     </td>
@@ -1059,7 +1060,7 @@
             },
             updateDataVip(dataList) {
                 _this.isLoading = true;
-                if (!dataList || dataList.length == 0 || !_this.isVip) {
+                if (!dataList || dataList.length == 0) {
                     return;
                 }
                 if (_this.vipsignList.length >= MaxCount) {
@@ -1175,93 +1176,93 @@
                     })
                 }
                 //Test TODO
-                if (!_this.isVip) {
-
-                    //Test TODO
-                    let num = getRandomInt(0, departmentList.length - 1)//Test TODO
-                    _this.updateData([
-                        {
-                            tagId: departmentList[num].tagId,
-                            totalNum: 50,
-                            currentNum: 30,
-                        },
-                        {
-                            tagId: departmentList[num + 1].tagId,
-                            totalNum: 50,
-                            currentNum: 20,
-                        }
-                    ])
-                    num = getRandomInt(0, 100)//Test TODO
-                    _this.updatePercentNum(num)
-                    //Test TODO
-                } else {
-                    _this.updateDataVip([
-                        {
-                            "birthday": "string",
-                            "company": "string",
-                            "employed_date": "string",
-                            "id": "string",
-                            "identity_number": "string",
-                            "name": "Hello LHF",
-                            "phone": "string",
-                            "remark": "string",
-                            "visit_end_timestamp": 0,
-                            "visit_purpose": "0",
-                            "visit_start_timestamp": 0,
-                            "visit_time_type": "0",
-                            "visitee_name": "string",
-                            "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg '//require('../assets/img/male.png'),
-                        },
-                        {
-                            "birthday": "string",
-                            "company": "string",
-                            "employed_date": "string",
-                            "id": "string",
-                            "identity_number": "string",
-                            "name": "Hello HT",
-                            "phone": "string",
-                            "remark": "string",
-                            "visit_end_timestamp": 0,
-                            "visit_purpose": "0",
-                            "visit_start_timestamp": 0,
-                            "visit_time_type": "0",
-                            "visitee_name": "string",
-                            "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg'//require('../assets/img/male.png'),
-                        },
-                        {
-                            "birthday": "string",
-                            "company": "string",
-                            "employed_date": "string",
-                            "id": "string",
-                            "identity_number": "string",
-                            "name": "吴学敏",
-                            "phone": "string",
-                            "remark": "string",
-                            "visit_end_timestamp": 0,
-                            "visit_purpose": "0",
-                            "visit_start_timestamp": 0,
-                            "visit_time_type": "0",
-                            "visitee_name": "string",
-                            "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg'//require('../assets/img/male.png'),
-                        },
-                        {
-                            "birthday": "string",
-                            "company": "string",
-                            "employed_date": "string",
-                            "id": "string",
-                            "identity_number": "string",
-                            "name": "赵南洋",
-                            "phone": "string",
-                            "remark": "string",
-                            "visit_end_timestamp": 0,
-                            "visit_purpose": "0",
-                            "visit_start_timestamp": 0,
-                            "visit_time_type": "0",
-                            "visitee_name": "string",
-                            "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg'//require('../assets/img/male.png'),
-                        }
-                    ])
-                }
+                // if (!_this.isVip) {
+                //
+                //     //Test TODO
+                //     let num = getRandomInt(0, departmentList.length - 1)//Test TODO
+                //     _this.updateData([
+                //         {
+                //             tagId: departmentList[num].tagId,
+                //             totalNum: 50,
+                //             currentNum: 30,
+                //         },
+                //         {
+                //             tagId: departmentList[num + 1].tagId,
+                //             totalNum: 50,
+                //             currentNum: 20,
+                //         }
+                //     ])
+                //     num = getRandomInt(0, 100)//Test TODO
+                //     _this.updatePercentNum(num)
+                //     //Test TODO
+                // } else {
+                //     _this.updateDataVip([
+                //         {
+                //             "birthday": "string",
+                //             "company": "string",
+                //             "employed_date": "string",
+                //             "id": "string",
+                //             "identity_number": "string",
+                //             "name": "Hello LHF",
+                //             "phone": "string",
+                //             "remark": "string",
+                //             "visit_end_timestamp": 0,
+                //             "visit_purpose": "0",
+                //             "visit_start_timestamp": 0,
+                //             "visit_time_type": "0",
+                //             "visitee_name": "string",
+                //             "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg '//require('../assets/img/male.png'),
+                //         },
+                //         {
+                //             "birthday": "string",
+                //             "company": "string",
+                //             "employed_date": "string",
+                //             "id": "string",
+                //             "identity_number": "string",
+                //             "name": "Hello HT",
+                //             "phone": "string",
+                //             "remark": "string",
+                //             "visit_end_timestamp": 0,
+                //             "visit_purpose": "0",
+                //             "visit_start_timestamp": 0,
+                //             "visit_time_type": "0",
+                //             "visitee_name": "string",
+                //             "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg'//require('../assets/img/male.png'),
+                //         },
+                //         {
+                //             "birthday": "string",
+                //             "company": "string",
+                //             "employed_date": "string",
+                //             "id": "string",
+                //             "identity_number": "string",
+                //             "name": "吴学敏",
+                //             "phone": "string",
+                //             "remark": "string",
+                //             "visit_end_timestamp": 0,
+                //             "visit_purpose": "0",
+                //             "visit_start_timestamp": 0,
+                //             "visit_time_type": "0",
+                //             "visitee_name": "string",
+                //             "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg'//require('../assets/img/male.png'),
+                //         },
+                //         {
+                //             "birthday": "string",
+                //             "company": "string",
+                //             "employed_date": "string",
+                //             "id": "string",
+                //             "identity_number": "string",
+                //             "name": "赵南洋",
+                //             "phone": "string",
+                //             "remark": "string",
+                //             "visit_end_timestamp": 0,
+                //             "visit_purpose": "0",
+                //             "visit_start_timestamp": 0,
+                //             "visit_time_type": "0",
+                //             "visitee_name": "string",
+                //             "photo": 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1545472443393&di=5d928dd483b57fdd7f36f79042b58bb7&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201408%2F13%2F20140813233515_Ge43P.jpeg'//require('../assets/img/male.png'),
+                //         }
+                //     ])
+                // }
                 //Test TODO
 
             }, 5 * 1000)
