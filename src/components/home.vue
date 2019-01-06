@@ -27,16 +27,6 @@
             if (!checkFull()) {
                 requestFullScreen();
                 reset();
-            }else {
-                //TEST TODO
-                // let isvip = !_this.isShowVIP;
-                // if (_this.isShowVIP != isvip) {
-                //     if (_this.$refs.staffPage) {
-                //         _this.$refs.staffPage.reloadData(isvip);
-                //         _this.isShowVIP = isvip;
-                //     }
-                // }
-                //TEST TODO
             }
 	    };
     });
@@ -46,9 +36,8 @@
             _this.resetStaff = false;
             setTimeout(() => {
                 if (_this.$refs.staffPage) {
-
                     _this.$refs.staffPage.initData();
-                    //_this.$refs.staffPage.reloadData(!_this.isShowVIP);
+                    _this.$refs.staffPage.getInitData();
                 }
             }, 2000)
         })
@@ -68,13 +57,13 @@
             data.photo = photoURL + signData.person.face_list[0].face_image_id;//http://api.vaiwan.com:8081/image/
             dataList.push(data);
 	    }
-	    if (_this.$refs.staffPage && dataList.length > 0 && _this.isShowVIP) {
+	    if (_this.$refs.staffPage && dataList.length > 0) {
 		    _this.$refs.staffPage.updateDataVip(dataList);
 	    }
     }
 
     function onVisitorSign(signDataList) {
-	    if (_this.$refs.staffPage && signDataList.length > 0 && !_this.isShowVIP) {
+	    if (_this.$refs.staffPage && signDataList.length > 0) {
 		    _this.$refs.staffPage.pullLatestData(signDataList);
 		    let percent = 0;
 		    if (_this.staffNum != 0) {
@@ -86,17 +75,12 @@
 
     var _this;
     var currentInterval;
-    const api = new API();
-    import API from '../api/API'
-    import Vue from 'vue';
     import StaffSignPage from '../components/staffsign_page.vue';
-    //import VipSignPage from '../components/vipsign_page.vue';
 
     export default {
 	    name: "home",
 	    components: {
-		    StaffSignPage,
-		    //VipSignPage,
+		    StaffSignPage
 	    },
 	    data() {
 		    _this = this;
@@ -145,20 +129,10 @@
 										    clearTimeout(_this.vipTimeOutId);
 										    onShowVipUI(res.data);
 									    } else {
-										    if (_this.$refs.staffPage) {
-											    _this.$refs.staffPage.reloadData(true);
-											    setTimeout(function load() {
-												    onShowVipUI(res.data);
-											    }, 2000)
-										    }
-										    _this.isShowVIP = true;
+									        _this.isShowVIP = true;
+									        onShowVipUI(res.data);
 									    }
 									    _this.vipTimeOutId = setTimeout(() => {
-										    if (_this.isShowVIP != false) {
-											    if (_this.$refs.staffPage) {
-												    _this.$refs.staffPage.reloadData(false);//show staff
-											    }
-										    }
 										    _this.isShowVIP = false;
 
 									    }, 15000)
@@ -185,17 +159,7 @@
 						    if (res.code == 200) {
 							    try {
 								    if (res.data && res.data.length > 0) {
-
-									    if (!_this.isShowVIP) {
-										    if (_this.$refs.staffPage) {
-											    _this.$refs.staffPage.reloadData(false);
-											    setTimeout(function load() {
-												    onVisitorSign(res.data);
-											    }, 2000)
-										    }
-									    } else {
-										    onVisitorSign(res.data);
-									    }
+								    	onVisitorSign(res.data);
 								    }
 							    }
 							    catch (e) {
@@ -220,7 +184,7 @@
 							    if (_this.staffNum != 0) {
 								    percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
 							    }
-							    if (_this.$refs.staffPage && !_this.isShowVIP) {
+							    if (_this.$refs.staffPage) {
 								    _this.$refs.staffPage.updatePercentNum(percent);
 							    }
 						    }
@@ -241,7 +205,7 @@
 							    if (_this.staffNum != 0) {
 								    percent = Math.ceil(_this.signInNum / _this.staffNum * 100)
 							    }
-							    if (_this.$refs.staffPage && !_this.isShowVIP) {
+							    if (_this.$refs.staffPage) {
 								    _this.$refs.staffPage.updatePercentNum(percent);
 							    }
 						    }
@@ -265,9 +229,6 @@
 				    if (_this.$refs.staffPage) {
 					    _this.$refs.staffPage.updateDateImage();
 				    }
-				    if (_this.$refs.vipPage) {
-					    _this.$refs.vipPage.updateDateImage();
-				    }
 			    }
 			    let dtime = new Date() - _this.currentDate;  // 计算时间差
 			    let diffDays = Math.floor(dtime / (24 * 3600 * 1000));
@@ -276,15 +237,25 @@
 				    if (_this.$refs.staffPage) {
 					    _this.$refs.staffPage.updateDateImage();
 				    }
-				    if (_this.$refs.vipPage) {
-					    _this.$refs.vipPage.updateDateImage();
-				    }
 			    }
 
-		    }, 60 * 1000);//定时器
-
+			    //TODO:
+                // if (_this.isShowVIP) {
+                 //    //当连续来VIP的情况
+                 //    clearTimeout(_this.vipTimeOutId);
+                 //    onShowVipUI([]);
+                // } else {
+                 //    onShowVipUI([]);
+                 //    _this.isShowVIP = true;
+                // }
+                // _this.vipTimeOutId = setTimeout(() => {
+                 //    _this.isShowVIP = false;
+                // }, 10000)
+            }, 60 * 1000);//定时器
 		    _this.getDataFromServer();
-
+            if (_this.$refs.staffPage) {
+                _this.$refs.staffPage.initData();
+            }
 	    },
 	    destroyed: function () {
 		    clearInterval(currentInterval);
