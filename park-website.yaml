@@ -1,0 +1,87 @@
+# ------------------- park website ------------------- #
+apiVersion: v1
+kind: Service
+metadata:
+  name: park-website-service
+spec:
+  type: NodePort
+  ports:
+  - port: 11180
+    nodePort: 11180
+    name: park-website
+  - port: 443
+    nodePort: 443 
+    name: park-website-https
+  selector:
+    app: park-website
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: park-website-deployment
+spec:
+  selector:
+    matchLabels:
+      app: park-website
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: park-website
+    spec:
+      containers:
+      - name: park-website
+        image: website:2.1.0
+        ports:
+        - containerPort: 11180
+        - containerPort: 443
+        volumeMounts:
+        - name: config-outside-image
+          mountPath: /yitu/nginx/website/config.json
+        - name: log-persistent-storage
+          mountPath: /yitu/nginx/log
+        - name: host-localtime
+          mountPath: /etc/localtime
+          readOnly: true
+        - name: host-timezone
+          mountPath: /etc/timezone
+          readOnly: true
+        #- name: nginx-config
+        #  mountPath: /yitu/nginx/config/nginx.conf
+        - name: yttps-website
+          mountPath: /yitu/nginx/website/yttps/
+        env:
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: park-secret
+              key: mongo-park-username
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: park-secret
+              key: mongo-park-password
+        - name: MONGO_DATABASE
+          value: "park"
+
+      volumes:
+      - name: config-outside-image
+        hostPath:
+          path: /data/config.json
+      - name: log-persistent-storage
+        hostPath:
+          path: /log
+      - name: host-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: nginx-config
+        hostPath: 
+          path: /data/nginx.conf
+      - name: yttps-website
+        hostPath:
+          path: /data/yttps/
+        
