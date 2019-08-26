@@ -193,8 +193,8 @@ const DEPARTMENT_LIST = [
     {
         tagId: '5b1d458a941fabdad68d3956',
         name: "Monitoring",
-        text: "监察部",
-        imgUrl: 'icon_jiancha.png',
+        text: "纪委办公室",
+        imgUrl: 'icon_jiweibangongshi.png',
         isInnerSide: false,
     },
     // {
