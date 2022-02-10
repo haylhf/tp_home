@@ -12,7 +12,7 @@
     "babel-polyfill": "^6.26.0",
     "echarts": "^3.8.5",
     "element-ui": "^2.3.6",
-    "node-sass": "^4.9.0",
+    "node-sass": "^7.0.0",
     "vue": "^2.5.16",
     "vue-multiselect": "^2.1.0",
     "vue-qart": "^2.1.1",
